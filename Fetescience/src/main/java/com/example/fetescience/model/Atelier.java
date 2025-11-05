@@ -47,7 +47,7 @@ public class Atelier {
     public Animateur getAnimateur(){return animateur;}
 
     public String toString(){
-        String message = "C'est un atelier\n"+ "id : "+id_atelier+"\n"+ "titre : "+titre+"\n"+"Animateur : "+animateur.getNom()+"\n"
+        String message = "C'est un atelier\n"+ "ID : "+id_atelier+"\n"+ "Titre : "+titre+"\n"+"Animateur : "+animateur.getNom()+"\n"
                 + "Creneaux : \n"+"   ";
 
         Iterator<Creneau> iterator = creneaux.iterator();
