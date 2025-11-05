@@ -35,7 +35,7 @@ public class Atelier {
     public void supprimerCreneau(Creneau c){creneaux.remove(c);}
     public void modifierStatutCreneau(int index, boolean statut){creneaux.get(index).setStatut(statut);}
     public void modifierlieu(int index, String lieu){creneaux.get(index).setLieu(lieu);}
-    public void modifierduree(int index, String duree){creneaux.get(index).setDuree(duree);}
+    public void modifierduree(int index, int duree){creneaux.get(index).setDuree(duree);}
     public void modifierhoraire(int index, int horaire){creneaux.get(index).setLieu(lieu);}
     public Crenau getCreneaux(int index){return Creneaux;}
 
@@ -45,4 +45,17 @@ public class Atelier {
 
     public void ajouterAnimateur(Animateur a){this.animateur = a;}
     public Animateur getAnimateur(){return animateur;}
+
+    public String toString(){
+        String message = "C'est un atelier\n"+ "id : "+id_atelier+"\n"+ "titre : "+titre+"\n"+"Animateur : "+animateur.getNom()+"\n"
+                + "Creneaux : \n"+"   ";
+
+        Iterator<Creneau> iterator = creneaux.iterator();
+        while (iterator.hasNext()) {
+            Creneau c = iterator.next();
+            message += c.toString();
+            message += "\n     ";
+        }
+        return message;
+    }
 }
