@@ -5,19 +5,23 @@ import jakarta.persistence.*;
 @Entity
 public class Animateur {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id_animateur;
-    @Column(nullable = false);
+    @Column(nullable = false)
     private String nom;
-    ArrayList<Atelier> listeAtelier = new ArrayList<Atelier>;
 
+    @OneToMany(mappedBy = "animateur", cascade = CascadeType.ALL, orphanRemoval = true)
+    ArrayList<Atelier> listeAtelier = new ArrayList<>();
+
+    public Animateur(String nom){
+        this.nom=nom;
+    }
     public Animateur(String id_animateur, String nom) {
         this.id_animateur = id_animateur;
         this.nom = nom;
     }
 
     public void AjouterAtelier(Atelier a) {
-        return listeAtelier.add(a);
+        listeAtelier.add(a);
     }
 
     public void SupprimerAtelier(Atelier a) {
@@ -36,8 +40,8 @@ public class Animateur {
 
     public void AfficherAtelier(Atelier a) {
         System.out.println("Liste des ateliers de l'animateur " + id_animateur + " :");
-        for (Atelier a : listeAtelier) {
-            System.out.println(a);
+        for (Atelier atelier : listeAtelier) {
+            System.out.println(atelier);
         }
     }
 
