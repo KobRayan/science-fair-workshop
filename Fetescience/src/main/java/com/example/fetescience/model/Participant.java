@@ -7,11 +7,10 @@ import java.util.Set;
 @Entity
 public class Participant{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private String id_animateur ;
-    @ManytoMany
-    private Listcreneau<creneau> choix = new HashSet<>();
+    @ManyToMany
+    private Set<Creneau> choix = new HashSet<>();
 
 public Participant ( String id_animateur){
     this.id_animateur=id_animateur;
@@ -26,14 +25,14 @@ public void inscrire(Atelier a, Creneau c){
     }
 }
 public void desinscrire(Atelier a, Creneau c ){
-    public void desinscrire(Atelier a, Creneau c) {
+
         if (choix.remove(c)) {
             a.retirerParticipant(this, c);
-            System.out.println(idAnimateur + " désinscrit de " + a.getNom() );
+            System.out.println(id_animateur + " désinscrit de " + a.getNom() );
         } else {
             System.out.println("Non inscrit à ce créneau.");
         }
-    }
+
 
 }
 @Override
@@ -41,10 +40,8 @@ public String toString(){
     return "Id_animateur : " + id_animateur + "choix : " + choix;
 }
 
-public String Afficherchoix(){
-    System.out.println("Liste des creneaux " + choix + " :");
-    for (Creneau c : choix)
-        System.out.println(c);
+    public String afficherChoix() {
+        return "Liste des créneaux : " + choix;
     }
 }
 }
