@@ -3,6 +3,9 @@ import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 //
+package com.example.fetescience.model;
+import jakarta.persistence.*;
+
 @Entity
 public class Creneau {
 
