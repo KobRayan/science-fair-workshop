@@ -1,10 +1,10 @@
 package com.example.fetescience.model;
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-//
-package com.example.fetescience.model;
-import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.*;
+
 
 @Entity
 public class Creneau {
@@ -20,6 +20,7 @@ public class Creneau {
     private int capacite;
 
     // Lien avec l’atelier
+    @Getter
     @ManyToOne
     @JoinColumn(name = "atelier_id")
     private Atelier atelier;

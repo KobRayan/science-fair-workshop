@@ -1,16 +1,23 @@
 package com.example.fetescience.model;
 import jakarta.persistence.*;
+import lombok.Getter;
+
+import java.util.*;
 
 
 @Entity
 public class Animateur {
+    @Getter // pour avoir getId_animateur() direct
     @Id
     private String id_animateur;
+    @Getter
     @Column(nullable = false)
     private String nom;
 
     @OneToMany(mappedBy = "animateur", cascade = CascadeType.ALL, orphanRemoval = true)
     ArrayList<Atelier> listeAtelier = new ArrayList<>();
+
+    public Animateur() {}
 
     public Animateur(String nom){
         this.nom=nom;
@@ -53,10 +60,4 @@ public class Animateur {
                 '}';
     }
 
-    public String getNom() {
-        return nom;
-    }
-    public String getId_animateur(){
-        return id_animateur;
-    }
 }

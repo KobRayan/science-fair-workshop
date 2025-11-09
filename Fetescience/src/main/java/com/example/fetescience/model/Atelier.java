@@ -1,6 +1,7 @@
 package com.example.fetescience.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.*;
@@ -13,6 +14,7 @@ public class Atelier {
     @Column(nullable = false)
     private String titre;
 
+    @Getter //easier syntax
     @Setter
     @ManyToOne
     @JoinColumn(name = "animateur_id_animateur")
@@ -47,9 +49,9 @@ public class Atelier {
     public void supprimerCreneau(Creneau c){ if (c != null && creneaux.contains(c)){System.out.println("creneaux deleted"); creneaux.remove(c);}}
 
     public void modifierStatutCreneau(int index, boolean statut){if (index >= 0 && index < creneaux.size()){System.out.println("creneaux modifie");creneaux.get(index).setStatut(statut);}}
-    public void modifierlieu(int index, String lieu){if(index >= 0 && index < creneaux.size() && creneaux.get(index)!=null){ystem.out.println("creneaux modifie"); creneaux.get(index).setLieu(lieu);}}
-    public void modifierduree(int index, int duree){if(index >= 0 && index < creneaux.size() && creneaux.get(index)!=null){ystem.out.println("creneaux modifie"); creneaux.get(index).setDuree(duree);}}
-    public void modifierhoraire(int index, int horaire){if(index >= 0 && index < creneaux.size() && creneaux.get(index)!=null){ystem.out.println("creneaux modifie"); creneaux.get(index).setHoraire(horaire);}}
+    public void modifierlieu(int index, String lieu){if(index >= 0 && index < creneaux.size() && creneaux.get(index)!=null){System.out.println("creneaux modifie"); creneaux.get(index).setLieu(lieu);}}
+    public void modifierduree(int index, int duree){if(index >= 0 && index < creneaux.size() && creneaux.get(index)!=null){System.out.println("creneaux modifie"); creneaux.get(index).setDuree(duree);}}
+    public void modifierhoraire(int index, int horaire){if(index >= 0 && index < creneaux.size() && creneaux.get(index)!=null){System.out.println("creneaux modifie"); creneaux.get(index).setHoraire_debut(horaire);}}
 
     public Creneau getCreneaux(int index) {
         if (index >= 0 && index < creneaux.size()) {
@@ -71,7 +73,6 @@ public class Atelier {
     //public Participant getParticipant(){return participant;}
 
     public void ajouterAnimateur(Animateur a){this.animateur = a;}
-    public Animateur getAnimateur(){return animateur;}
 
     public String toString(){
         String message = "C'est un atelier\n"+ "ID : "+id_atelier+"\n"+ "Titre : "+titre+"\n"+"Animateur : "+animateur.getNom()+"\n"
