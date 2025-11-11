@@ -1,10 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Titrse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Nouvelle inscription - Fête de la Science</title>
 </head>
 <body>
+<div class="container">
+    <header>
+        <h1>Inscription à un atelier</h1>
+        <p class="subtitle">Circuit Scientifique Bordelais - Fête de la Science</p>
+    </header>
 
+    <main>
+        <form id="form-inscription" method="POST" action="/inscrire_atelier">
+            <div class="form-group">
+                <label for="code_atelier">Code de l'atelier :</label>
+                <input
+                        type="text"
+                        id="code_atelier"
+                        name="code_atelier"
+                        required
+                        placeholder="Ex: ATL001"
+                        pattern="[A-Z0-9]+"
+                        title="Le code doit contenir uniquement des lettres majuscules et des chiffres">
+                <small class="help-text">
+                    Veuillez consulter la liste des ateliers disponibles pour obtenir le code
+                </small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">S'inscrire</button>
+                <button type="reset" class="btn btn-secondary">Réinitialiser</button>
+            </div>
+        </form>
+
+        <div class="info-section">
+            <h2>Informations importantes</h2>
+            <ul>
+                <li>Chaque atelier dispose d'un nombre de places limité</li>
+                <li>Vous recevrez une confirmation par email</li>
+                <li>L'inscription doit être validée par le laboratoire</li>
+            </ul>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 CNRS - Circuit Scientifique Bordelais</p>
+    </footer>
+</div>
 </body>
 </html>

@@ -1,1 +1,179 @@
-ins
+/**
+ * Styles pour la page de gestion des inscriptions
+ */
+
+/* === VARIABLES === */
+:root {
+    --primary-color: #0051a5;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --light-gray: #f8f9fa;
+    --border-radius: 8px;
+}
+
+/* === STYLES GÉNÉRAUX === */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: var(--light-gray);
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* === TITRE PRINCIPAL === */
+#inscription-planning {
+    color: var(--primary-color);
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 40px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid var(--primary-color);
+}
+
+/* === CONTENEUR DES INSCRIPTIONS === */
+#inscription-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* === CARTE D'INSCRIPTION === */
+.inscription {
+    background-color: white;
+    padding: 25px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.inscription:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* === TABLEAU === */
+.inscription table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.inscription table tr {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.inscription table tr:last-child {
+    border-bottom: none;
+}
+
+.inscription table td {
+    padding: 12px 8px;
+}
+
+.inscription table td:first-child {
+    font-weight: 600;
+    color: #555;
+    width: 30%;
+}
+
+.inscription table td:last-child {
+    color: #333;
+}
+
+/* Mise en valeur de certaines lignes */
+.inscription table tr:has(td:first-child:is([text="Titre"])) td:last-child {
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+/* === BOUTON DE DÉSINSCRIPTION === */
+.btn-desinscription {
+    width: 100%;
+    padding: 12px 20px;
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-desinscription:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.btn-desinscription:active {
+    transform: translateY(0);
+}
+
+.btn-desinscription:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* === MESSAGE D'AVERTISSEMENT === */
+.message-telephoner {
+    width: 100%;
+    padding: 15px;
+    background-color: #fff3cd;
+    color: #856404;
+    border: 2px solid var(--warning-color);
+    border-radius: var(--border-radius);
+    text-align: center;
+    font-weight: 600;
+}
+
+/* === SÉPARATEUR === */
+hr {
+    border: none;
+    border-top: 2px solid #e0e0e0;
+    margin: 30px 0;
+}
+
+/* === MESSAGE AUCUNE INSCRIPTION === */
+.aucune-inscription {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+    font-size: 1.2em;
+    font-style: italic;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    #inscription-planning {
+        font-size: 2em;
+    }
+
+    .inscription {
+        padding: 15px;
+    }
+
+    .inscription table td {
+        display: block;
+        width: 100%;
+        padding: 8px 0;
+    }
+
+    .inscription table td:first-child {
+        font-weight: 700;
+        margin-top: 10px;
+    }
+
+    .inscription table tr {
+        border-bottom: none;
+        margin-bottom: 15px;
+    }
+}
