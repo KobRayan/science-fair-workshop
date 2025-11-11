@@ -11,7 +11,8 @@ public class Participant {
     @Id
     @Column(nullable = false)
     private String id_participant;
-    @ManyToMany
+
+    @ManyToMany(mappedBy = "participants") /// dire que la table est gérée depuis Creneau!
     private Set<Creneau> choix = new HashSet<>(); /// a revoir les many to many et les autres annotations
 
     public Participant(String id_participant) {

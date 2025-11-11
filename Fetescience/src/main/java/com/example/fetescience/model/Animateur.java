@@ -15,7 +15,7 @@ public class Animateur {
     private String nom;
 
     @OneToMany(mappedBy = "animateur", cascade = CascadeType.ALL, orphanRemoval = true)
-    ArrayList<Atelier> listeAtelier = new ArrayList<>();
+    List<Atelier> listeAtelier = new ArrayList<>();
 
     public Animateur() {}
 
