@@ -1,17 +1,17 @@
 package com.example.fetescience.model;
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-//
-package com.example.fetescience.model;
-import jakarta.persistence.*;
+import lombok.Getter;
+//import lombok.Setter;
+
+import java.util.*;
+
 
 @Entity
 public class Creneau {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // identifiant de la table
+    private Long id;  //identifiant de la table
 
     private int horaire_debut;     // date + heure de début
     private int duree;          // durée du créneau
@@ -20,22 +20,24 @@ public class Creneau {
     private int capacite;
 
     // Lien avec l’atelier
+    @Getter
     @ManyToOne
     @JoinColumn(name = "atelier_id")
     private Atelier atelier;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Getter
+    @ManyToMany
     @JoinTable(
             name = "creneau_participant",
             joinColumns = @JoinColumn(name = "creneau_id"),
             inverseJoinColumns = @JoinColumn(name = "participant_id")
     )
-    private List<Participant> participants; // liste des participants
+    private Set<Participant> participants;
+    ///private List<Participant> participants; // liste des participants /// on passe à un Set pour eviter les doublons de participants
 
     //  Constructeur vide
-    public Creneau() {
-        this.participants = new ArrayList<>();
-    }
+    //public Creneau() { this.participants = new ArrayList<>(); }
+    public Creneau() { this.participants = new HashSet<>();}
 
     // Constructeur d’un créneau libre
     public Creneau(int horaire_debut, int duree, String lieu, int capacite) {
@@ -43,14 +45,16 @@ public class Creneau {
         this.duree = duree;
         this.lieu = lieu;
         this.capacite = capacite;
-        this.participants = new ArrayList<>();
+      //  this.participants = new ArrayList<>();
+        this.participants = new HashSet<>();
         this.statut = false;  // libre au départ
     }
 
     //Constructeur d’un créneau déjà occupé
     public Creneau(int horaire_debut, int duree, String lieu, int capacite, Participant participant) {
         this(horaire_debut, duree, lieu, capacite); // appelle l’autre constructeur
-        this.participants.add(participant);
+        this.participants = new HashSet<>();
+        this.participants.add(participant); /// il faut avoir instancié le set
         this.statut = true; // devient occupé
     }
 
@@ -96,11 +100,7 @@ public class Creneau {
         this.capacite = capacite;
     }
 
-    public List<Participant> getParticipants() {
-        return participants;
-    }
-
-    public void setParticipants(List<Participant> participants) {
+    public void setParticipants(Set<Participant> participants) {
         this.participants = participants;
     }
 
