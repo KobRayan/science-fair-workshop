@@ -36,7 +36,7 @@ public class Animateur {
             listeAtelier.remove(a);
         }
     }
-
+/*
     public void modifierAtelier(Atelier ancien, Atelier nouveau) {
         int index = listeAtelier.indexOf(ancien);
         if (index != -1) {
@@ -44,7 +44,7 @@ public class Animateur {
             nouveau.setAnimateur(this);
         }
     }
-
+*/
     public void AfficherAtelier(Atelier a) {
         System.out.println("Liste des ateliers de l'animateur " + id_animateur + " :");
         for (Atelier atelier : listeAtelier) {
@@ -58,6 +58,18 @@ public class Animateur {
                 "id_animateur='" + id_animateur + '\'' +
                 ", nbAteliers=" + listeAtelier.size() +
                 '}';
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;  // même object
+        if (!(o instanceof Animateur)) return false;
+        Animateur animateur = (Animateur) o;
+        return this.id_animateur != null && this.id_animateur.equals(animateur.id_animateur);
+    }
+
+    @Override
+    public int hashCode() {
+        return id_animateur != null ? id_animateur.hashCode() : 0;
     }
 
 }
