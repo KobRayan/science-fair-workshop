@@ -9,6 +9,7 @@ import java.util.*;
 @Entity
 public class Creneau {
 
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;  //identifiant de la table
@@ -20,6 +21,7 @@ public class Creneau {
     private int capacite;
 
     // Lien avec l’atelier
+    @Setter
     @Getter
     @ManyToOne
     @JoinColumn(name = "atelier_id")
@@ -132,6 +134,17 @@ public class Creneau {
         //
         return false; // valeur par défaut pour la compilation
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Creneau creneau = (Creneau) o;
+        return this.id != null && this.id.equals(creneau.id);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
 }
