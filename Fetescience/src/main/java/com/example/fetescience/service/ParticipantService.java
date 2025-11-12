@@ -28,4 +28,53 @@ public class ParticipantService {
         } else {
             System.out.println("Non inscrit à ce créneau.");
         }
+        /// CREATE
+        // needs throw catch
+        // public Atelier create(Atelier a) throws RuntimeException { return atelierRepository.save(a); }
+        public Participant create(Participant a) {
+
+            if (a.getTitre() == null || a.getTitre().isEmpty()) {
+                throw new IllegalArgumentException("Title cannot be empty!");
+            }
+
+            Optional<Participant> existing = participantRepository.findByTitre(a.getTitre());
+            if (existing.isPresent()) {
+                throw new IllegalArgumentException("Title '"
+                        + a.getTitre() + "' already exists!");
+            }
+
+            return participantRepository.save(a);
+        }
+
+        /// READ ALL
+        public Set<Participant> list() {
+            return participantRepository.findAllBy();
+        }
+
+        ///  READ ONE
+        public Participant getParticipantById(Long id) {
+            return participantRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Participant not found with id: " + id));
+        }
+
+        /// UPDATE
+        public Participant update(Long id, Participant participant) {
+            Participant existingParticipant = getParticpantById(id);
+            existingParticipant.setTitre(participant.getTitre()); // edit l'atelier
+            existingParticipant.setAnimateur(participant.getAnimateur());
+            existingParticipant.setCreneaux(participant.getCreneaux());
+
+            return participantRepository.save(existingParticipant);
+        }
+
+        /// DELETE
+        public void delete(Long id) {
+            try {
+                Participant existingParticipant = getParticipantById(id);
+                participantRepository.delete(existingParticipant);
+            } catch (Exception e) {
+                throw new RuntimeException(e+" Participant non trouvé. id cherché : "+id);
+            }
+
+        }
 }
