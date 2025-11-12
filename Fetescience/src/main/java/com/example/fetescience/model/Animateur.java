@@ -75,4 +75,8 @@ public class Animateur {
         return id_animateur != null ? id_animateur.hashCode() : 0;
     }
 
+    public String getNom(){
+        return nom;
+    }
+
 }
