@@ -1,0 +1,80 @@
+package com.example.fetescience.model;
+
+import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
+
+
+@Entity
+public class Participant {
+    @Id
+    @Column(nullable = false)
+    private String id_participant;
+
+    @ManyToMany(mappedBy = "participants") /// dire que la table est gérée depuis Creneau!
+    private Set<Creneau> choix = new HashSet<>(); /// a revoir les many to many et les autres annotations
+
+    public Participant(String id_participant) {
+        this.id_participant = id_participant;
+    }
+
+    public Participant() {
+    }
+
+    public String getId_participant() {
+        return id_participant;
+    }
+
+    /*public void inscrire(Atelier a, Creneau c) {
+        if (!choix.contains(c)) {
+            choix.add(c);
+            //a.ajouterParticipant(this,c); // essayons une autre facon
+
+            System.out.println(idAnimateur + " inscrit à l’atelier " + a.getNom() + " sur le créneau " + c);
+        } else {
+            System.out.println("Déjà inscrit à ce créneau !");
+        }
+    }*/
+
+    /// //// **************** peut etre comme ca car atelier depuis creneau?
+
+
+
+  /*  public void desinscrire(Atelier a, Creneau c) {
+
+        if (choix.remove(c)) {
+            a.retirerParticipant(this, c);
+            System.out.println(id_animateur + " désinscrit de " + a.getNom());
+        } else {
+            System.out.println("Non inscrit à ce créneau.");
+        }
+    }*/
+
+    /// ********************** alternative ??
+
+
+// hello
+
+
+@Override
+public String toString() {
+    return "Id_participant : " + id_participant + "choix : " + choix;
+}
+
+public String afficherChoix() {
+    return "Liste des créneaux : " + choix;
+}
+@Override
+public boolean equals(Object o) {
+    if (this == o) return true;  // même object
+    if (!(o instanceof Participant)) return false;
+    Participant participant = (Participant) o;
+    return this.id_participant != null && this.id_participant.equals(participant.id_participant);
+}
+
+@Override
+public int hashCode() {
+    return id_participant != null ? id_participant.hashCode() : 0;
+}
+}
