@@ -57,7 +57,7 @@ public class Participant {
     }*/
 
     /// ********************** alternative ??
-    public void desinscrire(Creneau c) {
+/*    public void desinscrire(Creneau c) {
 
         if (choix.contains(c)) {
             c.liberer(this);
@@ -65,7 +65,7 @@ public class Participant {
             System.out.println(id_participant + " désinscrit de " + c.getAtelier().getTitre());
         } else {
             System.out.println("Non inscrit à ce créneau.");
-        }
+        }*/
 
 
     }
