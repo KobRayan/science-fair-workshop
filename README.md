@@ -7,9 +7,9 @@ Application de gestion des créneaux d'ateliers pour la Fête de la Science 2024
 - Serigne Mbaye - Maintainer
 - Rayan Kobrossly - Maintainer
 - Adrien Chaudron - Maintainer
-- Zeynab Karim
-- Kassoum KONE
-
+- Zeynab Karim  - Maintainer
+- Kassoum KONE - Maintainer
+- Lucas Almamy Audin - Maintainer
 ## 🏗️ Architecture
 - **Backend** : Java 21, Spring Boot
 - **Frontend** : HTML5, CSS3, JavaScript
