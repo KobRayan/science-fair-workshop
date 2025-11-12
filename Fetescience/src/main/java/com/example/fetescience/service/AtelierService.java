@@ -5,6 +5,7 @@ import com.example.fetescience.repository.AtelierRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 ///  CRUD (Create Read Update Delete)
@@ -16,7 +17,20 @@ public class AtelierService {
 
     /// CREATE
     // needs throw catch
-    public Atelier create(Atelier a) throws RuntimeException { return atelierRepository.save(a); }
+   // public Atelier create(Atelier a) throws RuntimeException { return atelierRepository.save(a); }
+    public Atelier create(Atelier a) {
+
+        if (a.getTitre() == null || a.getTitre().isEmpty()) {
+            throw new IllegalArgumentException("Title cannot be empty!");
+        }
+
+        Optional<Atelier> existing = atelierRepository.findByTitre(a.getTitre());
+        if (existing.isPresent()) {
+            throw new IllegalArgumentException("Title '" + a.getTitre() + "' already exists!");
+        }
+
+        return atelierRepository.save(a);
+    }
 
     /// READ ALL
     public Set<Atelier> list() { return atelierRepository.findAllBy();}
@@ -47,6 +61,7 @@ public class AtelierService {
         }
 
     }
+
 
 
 
