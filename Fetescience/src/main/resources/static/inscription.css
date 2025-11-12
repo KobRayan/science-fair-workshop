@@ -82,13 +82,6 @@ body {
     color: #333;
 }
 
-/* Mise en valeur de certaines lignes */
-.inscription table tr:has(td:first-child:is([text="Titre"])) td:last-child {
-    color: var(--primary-color);
-    font-weight: 600;
-    font-size: 1.1em;
-}
-
 /* === BOUTON DE DÉSINSCRIPTION === */
 .btn-desinscription {
     width: 100%;
