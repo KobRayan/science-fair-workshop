@@ -6,7 +6,7 @@
 // Constantes
 const JOURS_LIMITE_DESINSCRIPTION = 2;
 const TEL_CNRS = "01 400 400";
-const URL_DESINSCRIPTION = "http://www.serveur.fr/desinscription/";
+const URL_DESINSCRIPTION = "http://localhost:8081/desinscription/";
 
 /**
  * Calcule le nombre de jours entre aujourd'hui et une date donnée
