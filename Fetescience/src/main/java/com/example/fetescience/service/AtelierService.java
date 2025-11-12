@@ -5,12 +5,50 @@ import com.example.fetescience.repository.AtelierRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+
+///  CRUD (Create Read Update Delete)
 
 @Service
 public class AtelierService {
-    private final AtelierRepository repo;
-    public AtelierService(AtelierRepository repo) { this.repo = repo; }
+    private final AtelierRepository atelierRepository;
+    public AtelierService(AtelierRepository atelierRepository) { this.atelierRepository = atelierRepository; }
 
-    public List<Atelier> list() { return repo.findAll(); }
-    public Atelier create(Atelier a) { return repo.save(a); }
+    /// CREATE
+    // needs throw catch
+    public Atelier create(Atelier a) throws RuntimeException { return atelierRepository.save(a); }
+
+    /// READ ALL
+    public Set<Atelier> list() { return atelierRepository.findAllBy();}
+
+    ///  READ ONE
+    public Atelier getAtelierById(Long id) {
+        return atelierRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Atelier not found with id: " + id));
+    }
+
+    /// UPDATE
+    public Atelier update(Long id, Atelier atelier) {
+        Atelier existingAtelier = getAtelierById(id);
+        existingAtelier.setTitre(atelier.getTitre()); // edit l'atelier
+        existingAtelier.setAnimateur(atelier.getAnimateur());
+        existingAtelier.setCreneaux(atelier.getCreneaux());
+
+        return atelierRepository.save(existingAtelier);
+    }
+
+    /// DELETE
+    public void delete(Long id) {
+        try {
+            Atelier existingAtelier = getAtelierById(id);
+            atelierRepository.delete(existingAtelier);
+        } catch (Exception e) {
+            throw new RuntimeException(e+" Atelier non trouvé. id cherché : "+id);
+        }
+
+    }
+
+
+
+
 }

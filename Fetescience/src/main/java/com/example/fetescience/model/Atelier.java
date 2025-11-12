@@ -22,6 +22,8 @@ public class Atelier {
 
     //private Participant participant;
 
+    @Setter
+    @Getter
     @OneToMany(mappedBy = "atelier", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Creneau> creneaux;
 
@@ -61,7 +63,7 @@ public class Atelier {
             return null;
         }
     }
-    public List<Creneau> getListCreneaux(){return creneaux;}
+    //public List<Creneau> getListCreneaux(){return creneaux;}
 
 
     // ********************************** PARTICIPANT
