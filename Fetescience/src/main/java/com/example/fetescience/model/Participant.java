@@ -57,7 +57,7 @@ public class Participant {
     }*/
 
     /// ********************** alternative ??
-    public void desinscrire(Creneau c) {
+/*    public void desinscrire(Creneau c) {
 
         if (choix.contains(c)) {
             c.liberer(this);
@@ -65,7 +65,7 @@ public class Participant {
             System.out.println(id_participant + " désinscrit de " + c.getAtelier().getTitre());
         } else {
             System.out.println("Non inscrit à ce créneau.");
-        }
+        }*/
 
 
     }
@@ -78,5 +78,17 @@ public class Participant {
 
     public String afficherChoix() {
         return "Liste des créneaux : " + choix;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;  // même object
+        if (!(o instanceof Participant)) return false;
+        Participant participant = (Participant) o;
+        return this.id_participant != null && this.id_participant.equals(participant.id_participant);
+    }
+
+    @Override
+    public int hashCode() {
+        return id_participant != null ? id_participant.hashCode() : 0;
     }
 }
