@@ -3,16 +3,20 @@ package com.example.fetescience.service;
 import com.example.fetescience.model.Participant;
 import com.example.fetescience.repository.ParticipantRepository;
 import org.springframework.stereotype.Service;
+import com.example.fetescience.model.Creneau;
 
 import java.util.List;
 
 @Service
 public class ParticipantService {
     private final ParticipantRepository repo;
-    public ParticipantService(repo){
+    public ParticipantService(ParticipantRepository repo){
         this.repo=repo;
     }
-    public void inscrire(Creneau c) {
+
+    public void inscrire(Participant p ,Creneau c) {
+        // RUNTIME TIME EXCEPTION
+        Participant participant= repo.findBy(String id_participant);
         if (!choix.contains(c)) {
             choix.add(c);
             System.out.println(id_participant + " inscrit à l’atelier " + c.getAtelier().getTitre() + " sur le créneau " + c);
