@@ -22,6 +22,9 @@ public class Animateur {
     public Animateur(String nom){
         this.nom=nom;
     }
+    public String getId_animateur(){
+        return id_animateur;
+    }
     public Animateur(String id_animateur, String nom) {
         this.id_animateur = id_animateur;
         this.nom = nom;
