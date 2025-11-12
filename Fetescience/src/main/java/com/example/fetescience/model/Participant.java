@@ -22,6 +22,10 @@ public class Participant {
     public Participant() {
     }
 
+    public String getId_participant() {
+        return id_participant;
+    }
+
     /*public void inscrire(Atelier a, Creneau c) {
         if (!choix.contains(c)) {
             choix.add(c);
@@ -34,16 +38,7 @@ public class Participant {
     }*/
 
     /// //// **************** peut etre comme ca car atelier depuis creneau?
-    public void inscrire(Creneau c) {
-        if (!choix.contains(c)) {
-            choix.add(c);
-            c.occuper(this);
 
-            System.out.println(id_participant + " inscrit à l’atelier " + c.getAtelier().getTitre() + " sur le créneau " + c);
-        } else {
-            System.out.println("Déjà inscrit à ce créneau !");
-        }
-    }
 
 
   /*  public void desinscrire(Atelier a, Creneau c) {
@@ -57,15 +52,6 @@ public class Participant {
     }*/
 
     /// ********************** alternative ??
-/*    public void desinscrire(Creneau c) {
-
-        if (choix.contains(c)) {
-            c.liberer(this);
-            choix.remove(c);
-            System.out.println(id_participant + " désinscrit de " + c.getAtelier().getTitre());
-        } else {
-            System.out.println("Non inscrit à ce créneau.");
-        }*/
 
 
     }

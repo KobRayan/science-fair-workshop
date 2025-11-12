@@ -1,7 +1,9 @@
 package com.example.fetescience.service;
 
 import com.example.fetescience.model.Atelier;
+import com.example.fetescience.model.Creneau;
 import com.example.fetescience.repository.AtelierRepository;
+import com.example.fetescience.repository.CreneauRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +15,15 @@ import java.util.Set;
 @Service
 public class AtelierService {
     private final AtelierRepository atelierRepository;
-    public AtelierService(AtelierRepository atelierRepository) { this.atelierRepository = atelierRepository; }
+    private final CreneauRepository creneauRepository;
+    private final CreneauService creneauService;
+
+    public AtelierService(AtelierRepository atelierRepository, CreneauRepository creneauRepository, CreneauService creneauService) {
+        this.atelierRepository = atelierRepository;
+        this.creneauRepository = creneauRepository;
+        this.creneauService = creneauService;
+    }
+
 
     /// CREATE
     // needs throw catch
@@ -62,8 +72,21 @@ public class AtelierService {
 
     }
 
+    /*
+ * Modifier le lieu de tous les creneaux appartenant à un atelier
+ */
+    public Atelier updateAtelierAndCreneauxLieu(Long atelierId, String newTitre, String newLieu) {
 
+        Atelier atelier = atelierRepository.findById(atelierId)
+                .orElseThrow(() -> new RuntimeException("Atelier not found"));
 
+        atelier.setTitre(newTitre); // optionnel
 
-
+        for (Creneau c : atelier.getCreneaux()) {
+            creneauService.modifierLieuCreneau(c.getId(), newLieu);
+        }
+        return atelierRepository.save(atelier);
+    }
 }
+
+
