@@ -3,90 +3,35 @@ package com.example.fetescience.service;
 import com.example.fetescience.model.Atelier;
 import com.example.fetescience.model.Creneau;
 import com.example.fetescience.repository.AtelierRepository;
-import com.example.fetescience.repository.CreneauRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-///  CRUD (Create Read Update Delete)
 
 @Service
 public class AtelierService {
-    private final AtelierRepository atelierRepository;
-    private final CreneauRepository creneauRepository;
-    private final CreneauService creneauService;
+    private final AtelierRepository repo;
 
-    public AtelierService(AtelierRepository atelierRepository, CreneauRepository creneauRepository, CreneauService creneauService) {
-        this.atelierRepository = atelierRepository;
-        this.creneauRepository = creneauRepository;
-        this.creneauService = creneauService;
+    public AtelierService(AtelierRepository repo) {
+        this.repo = repo;
     }
 
-
-    /// CREATE
-    // needs throw catch
-   // public Atelier create(Atelier a) throws RuntimeException { return atelierRepository.save(a); }
     public Atelier create(Atelier a) {
-
-        if (a.getTitre() == null || a.getTitre().isEmpty()) {
-            throw new IllegalArgumentException("Title cannot be empty!");
-        }
-
-        Optional<Atelier> existing = atelierRepository.findByTitre(a.getTitre());
-        if (existing.isPresent()) {
-            throw new IllegalArgumentException("Title '" + a.getTitre() + "' already exists!");
-        }
-
-        return atelierRepository.save(a);
+        return repo.save(a);
     }
 
-    /// READ ALL
-    public Set<Atelier> list() { return atelierRepository.findAllBy();}
-
-    ///  READ ONE
-    public Atelier getAtelierById(Long id) {
-        return atelierRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Atelier not found with id: " + id));
+    public List<Atelier> listAll() {
+        return repo.findAll();
     }
 
-    /// UPDATE
-    public Atelier update(Long id, Atelier atelier) {
-        Atelier existingAtelier = getAtelierById(id);
-        existingAtelier.setTitre(atelier.getTitre()); // edit l'atelier
-        existingAtelier.setAnimateur(atelier.getAnimateur());
-        existingAtelier.setCreneaux(atelier.getCreneaux());
-
-        return atelierRepository.save(existingAtelier);
+    public Atelier getById(Long id) {
+        return repo.findById(id).orElseThrow(() -> new RuntimeException("Atelier not found"));
     }
 
-    /// DELETE
-    public void delete(Long id) {
-        try {
-            Atelier existingAtelier = getAtelierById(id);
-            atelierRepository.delete(existingAtelier);
-        } catch (Exception e) {
-            throw new RuntimeException(e+" Atelier non trouvé. id cherché : "+id);
-        }
-
-    }
-
-    /*
- * Modifier le lieu de tous les creneaux appartenant à un atelier
- */
-    public Atelier updateAtelierAndCreneauxLieu(Long atelierId, String newTitre, String newLieu) {
-
-        Atelier atelier = atelierRepository.findById(atelierId)
-                .orElseThrow(() -> new RuntimeException("Atelier not found"));
-
-        atelier.setTitre(newTitre); // optionnel
-
+    // Logic to update location for all slots
+    public Atelier updateLieu(Long id, String newLieu) {
+        Atelier atelier = getById(id);
         for (Creneau c : atelier.getCreneaux()) {
-            creneauService.modifierLieuCreneau(c.getId(), newLieu);
+            c.setLieu(newLieu);
         }
-        return atelierRepository.save(atelier);
+        return repo.save(atelier);
     }
 }
-
-

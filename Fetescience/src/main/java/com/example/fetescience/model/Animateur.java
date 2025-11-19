@@ -1,81 +1,46 @@
 package com.example.fetescience.model;
+
 import jakarta.persistence.*;
 import lombok.Getter;
-
-import java.util.*;
-
+import lombok.Setter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Getter @Setter
 public class Animateur {
-    @Getter // pour avoir getId_animateur() direct
+
     @Id
-    private String id_animateur;
-    @Getter
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String nom;
 
     @OneToMany(mappedBy = "animateur", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Atelier> listeAtelier = new ArrayList<>();
+    private List<Atelier> listeAtelier = new ArrayList<>();
 
     public Animateur() {}
 
-    public Animateur(String nom){
-        this.nom=nom;
-    }
-    public String getId_animateur(){
-        return id_animateur;
-    }
-    public Animateur(String id_animateur, String nom) {
-        this.id_animateur = id_animateur;
+    public Animateur(String nom) {
         this.nom = nom;
     }
 
-    public void AjouterAtelier(Atelier a) {
+    public void ajouterAtelier(Atelier a) {
         listeAtelier.add(a);
+        a.setAnimateur(this);
     }
 
-    public void SupprimerAtelier(Atelier a) {
-        if (a != null && listeAtelier.contains(a)) {  /// à faire encore dans service
-        listeAtelier.remove(a);
-        a.setAnimateur(null); //synchronisation
-
-
-        }
-    }
-/*
-    public void modifierAtelier(Atelier ancien, Atelier nouveau) {
-        int index = listeAtelier.indexOf(ancien);
-        if (index != -1) {
-            listeAtelier.set(index, nouveau);
-            nouveau.setAnimateur(this);
-        }
-    }
-*/
-    public void AfficherAtelier(Atelier a) {
-        System.out.println("Liste des ateliers de l'animateur " + id_animateur + " :");
-        for (Atelier atelier : listeAtelier) {
-            System.out.println(atelier);
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "Animateur{" +
-                "id_animateur='" + id_animateur + '\'' +
-                ", nbAteliers=" + listeAtelier.size() +
-                '}';
-    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;  // même object
         if (!(o instanceof Animateur)) return false;
         Animateur animateur = (Animateur) o;
-        return this.id_animateur != null && this.id_animateur.equals(animateur.id_animateur);
+        return this.id != null && this.id.equals(animateur.id);
     }
 
     @Override
     public int hashCode() {
-        return id_animateur != null ? id_animateur.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 
     public String getNom(){

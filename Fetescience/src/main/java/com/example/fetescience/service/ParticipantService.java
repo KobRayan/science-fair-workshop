@@ -3,77 +3,63 @@ package com.example.fetescience.service;
 import com.example.fetescience.model.Participant;
 import com.example.fetescience.model.Creneau;
 import com.example.fetescience.repository.ParticipantRepository;
+import com.example.fetescience.repository.CreneauRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class ParticipantService {
-    private final ParticipantRepository participantRepository;
+    private final ParticipantRepository participantRepo;
+    private final CreneauRepository creneauRepo;
 
-    public ParticipantService(ParticipantRepository participantRepository) {
-        this.participantRepository = participantRepository;
-    }
-
-    public void inscrire(Participant p, Creneau c) {
-        Participant participant = getParticipantById(p.getId());
-
-        Set<Creneau> creneauxChoisis = participant.getCreneaux();
-
-        if (!creneauxChoisis.contains(c)) {
-            creneauxChoisis.add(c);
-            participant.setCreneaux(creneauxChoisis);
-            participantRepository.save(participant);
-            System.out.println(participant.getNom() + " inscrit à l’atelier " + c.getAtelier().getTitre() + " sur le créneau " + c);
-        } else {
-            System.out.println(participant.getNom() + " est déjà inscrit à ce créneau !");
-        }
-    }
-
-    public void desinscrire(Long participantId, Creneau c) {
-        Participant participant = getParticipantById(participantId);
-        Set<Creneau> creneauxChoisis = participant.getCreneaux();
-
-        if (creneauxChoisis.contains(c)) {
-            creneauxChoisis.remove(c);
-            participant.setCreneaux(creneauxChoisis);
-            participantRepository.save(participant);
-            System.out.println(participant.getNom() + " désinscrit de l'atelier " + c.getAtelier().getTitre());
-        } else {
-            System.out.println(participant.getNom() + " n'est pas inscrit à ce créneau.");
-        }
+    public ParticipantService(ParticipantRepository pr, CreneauRepository cr) {
+        this.participantRepo = pr;
+        this.creneauRepo = cr;
     }
 
     public Participant create(Participant p) {
-        if (p.getNom() == null || p.getNom().isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be empty!");
-        }
-
-        return participantRepository.save(p);
+        return participantRepo.save(p);
     }
 
     public List<Participant> listAll() {
-        return participantRepository.findAll();
+        return participantRepo.findAll();
     }
 
-    public Participant getParticipantById(Long id) {
-        return participantRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Participant not found with id: " + id));
+    public Participant getById(Long id) {
+        return participantRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Participant not found"));
     }
 
-    public Participant update(Long id, Participant participantDetails) {
-        Participant existingParticipant = getParticipantById(id);
+    public void inscrire(Long participantId, Long creneauId) {
+        Participant p = getById(participantId);
+        Creneau c = creneauRepo.findById(creneauId)
+                .orElseThrow(() -> new RuntimeException("Creneau not found"));
 
-        existingParticipant.setNom(participantDetails.getNom());
-        existingParticipant.setEmail(participantDetails.getEmail());
+        if (c.isComplet()) {
+            throw new RuntimeException("Désolé, ce créneau est complet !");
+        }
 
-        return participantRepository.save(existingParticipant);
+        // Sync logic (handled in model helper, but we save here)
+        p.addCreneau(c);
+
+        // If full, mark as full
+        if (c.getParticipants().size() >= c.getCapacite()) {
+            c.setStatut(true);
+        }
+
+        creneauRepo.save(c);
+        participantRepo.save(p);
     }
 
-    public void delete(Long id) {
-        Participant existingParticipant = getParticipantById(id);
-        participantRepository.delete(existingParticipant);
+    public void desinscrire(Long participantId, Long creneauId) {
+        Participant p = getById(participantId);
+        Creneau c = creneauRepo.findById(creneauId)
+                .orElseThrow(() -> new RuntimeException("Creneau not found"));
+
+        p.removeCreneau(c);
+        c.setStatut(false); // Definitely not full anymore
+
+        creneauRepo.save(c);
+        participantRepo.save(p);
     }
 }
