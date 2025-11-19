@@ -104,6 +104,9 @@ public class Creneau {
 
     public void setParticipants(Set<Participant> participants) {
         this.participants = participants;
+        for(Participant p  : participants){
+            p.setCreneau(this);
+        }
     }
 
     @Override

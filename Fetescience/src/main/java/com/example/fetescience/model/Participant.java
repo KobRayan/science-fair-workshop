@@ -55,7 +55,10 @@ public class Participant {
 
 
 // hello
-
+public void setCreneau(Creneau c){
+    // pour synchro
+    ///  à implémenter
+}
 
 @Override
 public String toString() {

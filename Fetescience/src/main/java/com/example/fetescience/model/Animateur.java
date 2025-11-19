@@ -35,8 +35,11 @@ public class Animateur {
     }
 
     public void SupprimerAtelier(Atelier a) {
-        if (a != null && listeAtelier.contains(a)) {
-            listeAtelier.remove(a);
+        if (a != null && listeAtelier.contains(a)) {  /// à faire encore dans service
+        listeAtelier.remove(a);
+        a.setAnimateur(null); //synchronisation
+
+
         }
     }
 /*

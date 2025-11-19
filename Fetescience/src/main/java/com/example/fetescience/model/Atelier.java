@@ -45,13 +45,13 @@ public class Atelier {
     // ******************************* CRENEAUX
     public void ajouterCreneau(Creneau c){
         System.out.println("creneaux set"); creneaux.add(c);
-        c.setAtelier(this);
+        c.setAtelier(this); //synchronisation
     }
     public void supprimerCreneau(Creneau c){
-        if (c != null && creneaux.contains(c)){
+        if (c != null && creneaux.contains(c)){  //à faire la condition dans service et ici
             System.out.println("creneaux deleted"); creneaux.remove(c);
             c.setAtelier(null);
-        }
+       }
     }
 
     /*public void modifierStatutCreneau(int index, boolean statut){if (index >= 0 && index < creneaux.size()){System.out.println("creneaux modifie");creneaux.get(index).setStatut(statut);}}
@@ -78,7 +78,10 @@ public class Atelier {
 
     //public Participant getParticipant(){return participant;}
 
-    public void ajouterAnimateur(Animateur a){this.animateur = a;}
+    public void ajouterAnimateur(Animateur a){
+        this.animateur = a;
+        a.AjouterAtelier(this);
+    }
 
     public String toString(){
         String message = "C'est un atelier\n"+ "ID : "+id_atelier+"\n"+ "Titre : "+titre+"\n"+"Animateur : "+animateur.getNom()+"\n"
