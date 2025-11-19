@@ -26,6 +26,7 @@ public class Participant {
         return id_participant;
     }
 
+
     /*public void inscrire(Atelier a, Creneau c) {
         if (!choix.contains(c)) {
             choix.add(c);
@@ -56,7 +57,9 @@ public class Participant {
 
 // hello
 public void setCreneau(Creneau c){
-    // pour synchro
+    if(c!=null && !choix.contains(c)) {
+        choix.add(c);
+    }
     ///  à implémenter
 }
 
