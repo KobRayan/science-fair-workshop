@@ -1,84 +1,79 @@
 package com.example.fetescience.service;
 
 import com.example.fetescience.model.Participant;
+import com.example.fetescience.model.Creneau;
 import com.example.fetescience.repository.ParticipantRepository;
 import org.springframework.stereotype.Service;
-import com.example.fetescience.model.Creneau;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ParticipantService {
-    private final ParticipantRepository repo;
-    public ParticipantService(ParticipantRepository repo){
-        this.repo=repo;
+    private final ParticipantRepository participantRepository;
+
+    public ParticipantService(ParticipantRepository participantRepository) {
+        this.participantRepository = participantRepository;
     }
 
-    public void inscrire(Participant p ,Creneau c) {
-        // RUNTIME TIME EXCEPTION
-        Participant participant= repo.findBy(String id_participant);
-        if (!choix.contains(c)) {
-            choix.add(c);
-            System.out.println(id_participant + " inscrit à l’atelier " + c.getAtelier().getTitre() + " sur le créneau " + c);
+    public void inscrire(Participant p, Creneau c) {
+        Participant participant = getParticipantById(p.getId());
+
+        Set<Creneau> creneauxChoisis = participant.getCreneaux();
+
+        if (!creneauxChoisis.contains(c)) {
+            creneauxChoisis.add(c);
+            participant.setCreneaux(creneauxChoisis);
+            participantRepository.save(participant);
+            System.out.println(participant.getNom() + " inscrit à l’atelier " + c.getAtelier().getTitre() + " sur le créneau " + c);
         } else {
-            System.out.println("Déjà inscrit à ce créneau !");
+            System.out.println(participant.getNom() + " est déjà inscrit à ce créneau !");
         }
     }
 
-    public void desinscrire(Creneau c) {
-        if (choix.contains(c)) {
-            choix.remove(c);
-            System.out.println(id_participant + " désinscrit de " + c.getAtelier().getTitre());
+    public void desinscrire(Long participantId, Creneau c) {
+        Participant participant = getParticipantById(participantId);
+        Set<Creneau> creneauxChoisis = participant.getCreneaux();
+
+        if (creneauxChoisis.contains(c)) {
+            creneauxChoisis.remove(c);
+            participant.setCreneaux(creneauxChoisis);
+            participantRepository.save(participant);
+            System.out.println(participant.getNom() + " désinscrit de l'atelier " + c.getAtelier().getTitre());
         } else {
-            System.out.println("Non inscrit à ce créneau.");
+            System.out.println(participant.getNom() + " n'est pas inscrit à ce créneau.");
         }
-        /// CREATE
-        // needs throw catch
-        // public Atelier create(Atelier a) throws RuntimeException { return atelierRepository.save(a); }
-        public Participant create(Participant a) {
+    }
 
-            if (a.getTitre() == null || a.getTitre().isEmpty()) {
-                throw new IllegalArgumentException("Title cannot be empty!");
-            }
-
-            Optional<Participant> existing = participantRepository.findByTitre(a.getTitre());
-            if (existing.isPresent()) {
-                throw new IllegalArgumentException("Title '"
-                        + a.getTitre() + "' already exists!");
-            }
-
-            return participantRepository.save(a);
+    public Participant create(Participant p) {
+        if (p.getNom() == null || p.getNom().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty!");
         }
 
-        /// READ ALL
-        public Set<Participant> list() {
-            return participantRepository.findAllBy();
-        }
+        return participantRepository.save(p);
+    }
 
-        ///  READ ONE
-        public Participant getParticipantById(Long id) {
-            return participantRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Participant not found with id: " + id));
-        }
+    public List<Participant> listAll() {
+        return participantRepository.findAll();
+    }
 
-        /// UPDATE
-        public Participant update(Long id, Participant participant) {
-            Participant existingParticipant = getParticpantById(id);
-            existingParticipant.setTitre(participant.getTitre()); // edit l'atelier
-            existingParticipant.setAnimateur(participant.getAnimateur());
-            existingParticipant.setCreneaux(participant.getCreneaux());
+    public Participant getParticipantById(Long id) {
+        return participantRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Participant not found with id: " + id));
+    }
 
-            return participantRepository.save(existingParticipant);
-        }
+    public Participant update(Long id, Participant participantDetails) {
+        Participant existingParticipant = getParticipantById(id);
 
-        /// DELETE
-        public void delete(Long id) {
-            try {
-                Participant existingParticipant = getParticipantById(id);
-                participantRepository.delete(existingParticipant);
-            } catch (Exception e) {
-                throw new RuntimeException(e+" Participant non trouvé. id cherché : "+id);
-            }
+        existingParticipant.setNom(participantDetails.getNom());
+        existingParticipant.setEmail(participantDetails.getEmail());
 
-        }
+        return participantRepository.save(existingParticipant);
+    }
+
+    public void delete(Long id) {
+        Participant existingParticipant = getParticipantById(id);
+        participantRepository.delete(existingParticipant);
+    }
 }
