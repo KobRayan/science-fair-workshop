@@ -4,10 +4,13 @@ import com.example.fetescience.model.Atelier;
 import com.example.fetescience.model.Creneau;
 import com.example.fetescience.repository.CreneauRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class CreneauService {
 
     private final CreneauRepository repo;

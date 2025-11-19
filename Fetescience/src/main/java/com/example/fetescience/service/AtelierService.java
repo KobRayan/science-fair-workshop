@@ -3,10 +3,12 @@ package com.example.fetescience.service;
 import com.example.fetescience.model.Atelier;
 import com.example.fetescience.model.Creneau;
 import com.example.fetescience.repository.AtelierRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Transactional
 public class AtelierService {
     private final AtelierRepository repo;
 

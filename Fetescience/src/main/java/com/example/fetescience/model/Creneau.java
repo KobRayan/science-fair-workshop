@@ -56,6 +56,7 @@ public class Creneau {
         return (debutThis < finAutre) && (finThis > debutAutre);
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -64,9 +65,9 @@ public class Creneau {
         return this.id != null && this.id.equals(creneau.id);
     }
 
-    @Override
+   /* @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
+    }*/
 
 }

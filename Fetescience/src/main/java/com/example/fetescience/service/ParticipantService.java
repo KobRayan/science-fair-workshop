@@ -5,9 +5,12 @@ import com.example.fetescience.model.Creneau;
 import com.example.fetescience.repository.ParticipantRepository;
 import com.example.fetescience.repository.CreneauRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
+@Transactional
 public class ParticipantService {
     private final ParticipantRepository participantRepo;
     private final CreneauRepository creneauRepo;

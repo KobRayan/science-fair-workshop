@@ -2,11 +2,13 @@ package com.example.fetescience.service;
 
 import com.example.fetescience.model.Animateur;
 import com.example.fetescience.repository.AnimateurRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class AnimateurService {
     private final AnimateurRepository repo;
 

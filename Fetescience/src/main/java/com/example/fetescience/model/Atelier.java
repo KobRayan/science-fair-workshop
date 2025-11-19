@@ -43,8 +43,8 @@ public class Atelier {
         return this.id != null && this.id.equals(atelier.id);
     }
 
-    @Override
+    /*@Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
-    }
+    }*/
 }

@@ -14,14 +14,19 @@ public class Participant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Nom and Email removed as requested
+    private String nom; // <--- Added field
 
     @ManyToMany(mappedBy = "participants")
     private Set<Creneau> creneaux = new HashSet<>();
 
     public Participant() {}
 
-    // Helper to keep things cleaner
+    // Constructor with name
+    public Participant(String nom) {
+        this.nom = nom;
+    }
+
+    // Helper methods for synchronization
     public void addCreneau(Creneau c) {
         this.creneaux.add(c);
         c.getParticipants().add(this);
@@ -40,8 +45,8 @@ public boolean equals(Object o) {
     return this.id != null && this.id.equals(participant.id);
 }
 
-@Override
+/*@Override
 public int hashCode() {
     return id != null ? id.hashCode() : 0;
-}
+}*/
 }

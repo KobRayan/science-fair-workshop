@@ -38,10 +38,10 @@ public class Animateur {
         return this.id != null && this.id.equals(animateur.id);
     }
 
-    @Override
+    /*@Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
-    }
+    }*/
 
     public String getNom(){
         return nom;
