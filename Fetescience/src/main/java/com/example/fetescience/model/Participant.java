@@ -8,22 +8,18 @@ import java.util.Set;
 
 @Entity
 @Getter @Setter
-public class Participant {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String nom; // <--- Added field
+public class Participant extends Personne{
 
     @ManyToMany(mappedBy = "participants")
     private Set<Creneau> creneaux = new HashSet<>();
 
-    public Participant() {}
+    public Participant() {
+        super();
+        this.setRole(Role.PARTICIPANT);
+    }
 
-    // Constructor with name
-    public Participant(String nom) {
-        this.nom = nom;
+    public Participant(String nom, String email, String password) {
+        super(nom, email, password, Role.PARTICIPANT);
     }
 
     // Helper methods for synchronization
@@ -42,7 +38,7 @@ public boolean equals(Object o) {
     if (this == o) return true;  // même object
     if (!(o instanceof Participant)) return false;
     Participant participant = (Participant) o;
-    return this.id != null && this.id.equals(participant.id);
+    return this.getId() != null && this.getId().equals(participant.getId());
 }
 
 /*@Override

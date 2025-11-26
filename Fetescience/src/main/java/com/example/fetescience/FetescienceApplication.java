@@ -53,8 +53,8 @@ public class FetescienceApplication {
             System.out.println("\n⚡⚡⚡ DÉBUT DU TEST INTÉGRATION (AVEC NOMS) ⚡⚡⚡\n");
 
             // 1. ANIMATEURS
-            Animateur anim1 = animateurService.create(new Animateur("Marie Curie"));
-            Animateur anim2 = animateurService.create(new Animateur("Albert Einstein"));
+            Animateur anim1 = animateurService.create(new Animateur("Marie Curie","mariecurie@gmail.com","hello"));
+            Animateur anim2 = animateurService.create(new Animateur("Albert Einstein","alberteinstein@gmail.Com","hello"));
 
             // 2. ATELIERS
             Atelier atelier1 = new Atelier("Physique Quantique");
@@ -71,9 +71,9 @@ public class FetescienceApplication {
 
             // 4. PARTICIPANTS (Maintenant avec des Noms !)
             System.out.println("--- Création des Participants ---");
-            Participant p1 = participantService.create(new Participant("Alice"));
-            Participant p2 = participantService.create(new Participant("Bob"));
-            Participant p3 = participantService.create(new Participant("Charlie"));
+            Participant p1 = participantService.create(new Participant("Alice","test","test"));
+            Participant p2 = participantService.create(new Participant("Bob","test","test"));
+            Participant p3 = participantService.create(new Participant("Charlie","test","test"));
 
             System.out.println("✅ Participants créés : " + p1.getNom() + ", " + p2.getNom() + ", " + p3.getNom());
 

@@ -8,21 +8,19 @@ import java.util.List;
 
 @Entity
 @Getter @Setter
-public class Animateur {
+public class Animateur extends Personne{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String nom;
 
     @OneToMany(mappedBy = "animateur", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Atelier> listeAtelier = new ArrayList<>();
 
-    public Animateur() {}
+    public Animateur() {
+        super();
+        this.setRole(Role.ANIMATEUR);
+    }
 
-    public Animateur(String nom) {
-        this.nom = nom;
+    public Animateur(String nom, String email, String password) {
+        super(nom, email, password, Role.ANIMATEUR);
     }
 
     public void ajouterAtelier(Atelier a) {
@@ -35,7 +33,7 @@ public class Animateur {
         if (this == o) return true;  // même object
         if (!(o instanceof Animateur)) return false;
         Animateur animateur = (Animateur) o;
-        return this.id != null && this.id.equals(animateur.id);
+        return this.getId() != null && this.getId().equals(animateur.getId());
     }
 
     /*@Override
@@ -43,8 +41,6 @@ public class Animateur {
         return id != null ? id.hashCode() : 0;
     }*/
 
-    public String getNom(){
-        return nom;
-    }
+
 
 }
