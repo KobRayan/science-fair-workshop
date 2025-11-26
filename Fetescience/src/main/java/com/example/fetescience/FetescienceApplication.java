@@ -72,14 +72,15 @@ public class FetescienceApplication {
             // 4. PARTICIPANTS (Maintenant avec des Noms !)
             System.out.println("--- Création des Participants ---");
             Participant p1 = participantService.create(new Participant("Alice"));
-            Participant p2 = participantService.create(new Participant("Bob"));
-            Participant p3 = participantService.create(new Participant("Charlie"));
+            System.out.println("Helllo");
+            //Participant p2 = participantService.create(new Participant("Bob"));
+           // Participant p3 = participantService.create(new Participant("Charlie"));
 
-            System.out.println("✅ Participants créés : " + p1.getNom() + ", " + p2.getNom() + ", " + p3.getNom());
+            System.out.println("✅ Participants créés : " + p1.getNom());
 
             // 5. INSCRIPTIONS
             participantService.inscrire(p1.getId(), c1.getId());
-            participantService.inscrire(p2.getId(), c1.getId());
+          //  participantService.inscrire(p2.getId(), c1.getId());
 
             System.out.println("\n✨✨✨ TEST TERMINÉ ✨✨✨");
             System.out.println("➡️ Vérifiez les noms sur http://localhost:8081/h2");
