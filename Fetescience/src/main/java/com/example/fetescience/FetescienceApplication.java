@@ -1,18 +1,3 @@
-/*package com.example.fetescience;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class FetescienceApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(FetescienceApplication.class, args);
-    }
-    //System.out.println("Hello guys");
-    // test de push
-}
-//HELLOO*/
 package com.example.fetescience;
 
 import com.example.fetescience.model.*;
@@ -22,8 +7,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import java.util.List;
 
 @SpringBootApplication
 public class FetescienceApplication {
@@ -37,26 +20,34 @@ public class FetescienceApplication {
                                           AtelierService atelierService,
                                           CreneauService creneauService,
                                           ParticipantService participantService,
-                                          ParticipantRepository participantRepo,
+                                          AuthService authService,
+                                          PersonneRepository personneRepo,
                                           CreneauRepository creneauRepo,
-                                          AtelierRepository atelierRepo,
-                                          AnimateurRepository animateurRepo) {
+                                          AtelierRepository atelierRepo) {
         return (args) -> {
             System.out.println("🧹 NETTOYAGE DE LA BASE DE DONNÉES...");
-            // Order is important because of Foreign Keys!
-            // Delete children first (Creneau/Participant), then Parents (Atelier/Animateur)
+
+            // 1. Delete Children (Creneaux)
             creneauRepo.deleteAll();
-            participantRepo.deleteAll();
+
+            // 2. Delete Ateliers (Linked to Animateurs)
             atelierRepo.deleteAll();
-            animateurRepo.deleteAll();
+
+            // 3. Delete ALL Users (Animateurs + Participants) via the Parent Table
+            personneRepo.deleteAll();
+
             System.out.println("✨ Base vide. Début de l'insertion...");
-            System.out.println("\n⚡⚡⚡ DÉBUT DU TEST INTÉGRATION (AVEC NOMS) ⚡⚡⚡\n");
+            System.out.println("\n⚡⚡⚡ DÉBUT DU TEST INTÉGRATION (AVEC AUTH) ⚡⚡⚡\n");
 
-            // 1. ANIMATEURS
-            Animateur anim1 = animateurService.create(new Animateur("Marie Curie","mariecurie@gmail.com","hello"));
-            Animateur anim2 = animateurService.create(new Animateur("Albert Einstein","alberteinstein@gmail.Com","hello"));
+            // --- 1. ANIMATEURS ---
+            // Constructeur : Nom, Email, Password
+            Animateur anim1 = new Animateur("Marie Curie", "marie@science.com", "radium");
+            animateurService.create(anim1);
 
-            // 2. ATELIERS
+            Animateur anim2 = new Animateur("Albert Einstein", "albert@science.com", "mc2");
+            animateurService.create(anim2);
+
+            // --- 2. ATELIERS ---
             Atelier atelier1 = new Atelier("Physique Quantique");
             atelier1.setAnimateur(anim1);
             atelierService.create(atelier1);
@@ -65,24 +56,59 @@ public class FetescienceApplication {
             atelier2.setAnimateur(anim2);
             atelierService.create(atelier2);
 
-            // 3. CRENEAUX
+            // --- 3. CRENEAUX ---
             Creneau c1 = new Creneau(10, 60, "Amphi A", 2);
             creneauService.addCreneauToAtelier(atelier1, c1);
 
-            // 4. PARTICIPANTS (Maintenant avec des Noms !)
+            // --- 4. PARTICIPANTS ---
             System.out.println("--- Création des Participants ---");
-            Participant p1 = participantService.create(new Participant("Alice","test","test"));
-            Participant p2 = participantService.create(new Participant("Bob","test","test"));
-            Participant p3 = participantService.create(new Participant("Charlie","test","test"));
+            Participant p1 = new Participant("Alice", "alice@test.com", "passAlice");
+            participantService.create(p1);
+
+            Participant p2 = new Participant("Bob", "bob@test.com", "passBob");
+            participantService.create(p2);
+
+            Participant p3 = new Participant("Charlie", "charlie@test.com", "passCharlie");
+            participantService.create(p3);
 
             System.out.println("✅ Participants créés : " + p1.getNom() + ", " + p2.getNom() + ", " + p3.getNom());
 
-            // 5. INSCRIPTIONS
+            // --- 5. INSCRIPTIONS ---
             participantService.inscrire(p1.getId(), c1.getId());
             participantService.inscrire(p2.getId(), c1.getId());
+            System.out.println("✅ Inscriptions effectuées.");
+
+            // --- 6. TEST AUTHENTIFICATION ---
+            System.out.println("\n🔐 --- Test de l'AuthService ---");
+
+            // Test A: Login Valid (Animateur)
+            System.out.print("👉 Test Login 'marie@science.com' (Animateur) : ");
+            Personne user1 = authService.authenticate("marie@science.com", "radium");
+            if (user1 != null) {
+                System.out.println("✅ SUCCÈS - Connecté en tant que " + user1.getRole());
+            } else {
+                System.out.println("❌ ÉCHEC");
+            }
+
+            // Test B: Login Valid (Participant)
+            System.out.print("👉 Test Login 'alice@test.com' (Participant) : ");
+            Personne user2 = authService.authenticate("alice@test.com", "passAlice");
+            if (user2 != null) {
+                System.out.println("✅ SUCCÈS - Connecté en tant que " + user2.getRole());
+            } else {
+                System.out.println("❌ ÉCHEC");
+            }
+
+            // Test C: Bad Password
+            System.out.print("👉 Test Mauvais Mot de Passe : ");
+            Personne user3 = authService.authenticate("alice@test.com", "mauvaispass");
+            if (user3 == null) {
+                System.out.println("✅ SUCCÈS (Login rejeté correctement)");
+            } else {
+                System.out.println("❌ ÉCHEC (L'utilisateur ne devrait pas être connecté !)");
+            }
 
             System.out.println("\n✨✨✨ TEST TERMINÉ ✨✨✨");
-            System.out.println("➡️ Vérifiez les noms sur http://localhost:8081/h2");
         };
     }
 }
