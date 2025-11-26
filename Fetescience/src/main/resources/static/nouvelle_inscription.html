@@ -17,14 +17,16 @@
         <form id="form-inscription" method="POST" action="/inscrire_atelier">
             <div class="form-group">
                 <label for="code_atelier">Code de l'atelier :</label>
-                <input
-                        type="text"
+                <select
                         id="code_atelier"
                         name="code_atelier"
-                        required
-                        placeholder="Ex: ATL001"
-                        pattern="[A-Z0-9]+"
-                        title="Le code doit contenir uniquement des lettres majuscules et des chiffres">
+                        required>
+                    <option value="">-- Sélectionnez un atelier --</option>
+                    <option value="ATL001">ATL001 - Liquides durs et solides mous</option>
+                    <option value="ATL002">ATL002 - Cybersécurité</option>
+                    <option value="ATL003">ATL003 - Intelligence Artificielle</option>
+                    <option value="ATL004">ATL004 - Physique quantique</option>
+                </select>
                 <small class="help-text">
                     Veuillez consulter la liste des ateliers disponibles pour obtenir le code
                 </small>
