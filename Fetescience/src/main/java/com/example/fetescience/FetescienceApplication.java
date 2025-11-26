@@ -17,6 +17,7 @@ package com.example.fetescience;
 
 import com.example.fetescience.model.*;
 import com.example.fetescience.service.*;
+import com.example.fetescience.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -35,8 +36,20 @@ public class FetescienceApplication {
     public CommandLineRunner testServices(AnimateurService animateurService,
                                           AtelierService atelierService,
                                           CreneauService creneauService,
-                                          ParticipantService participantService) {
+                                          ParticipantService participantService,
+                                          ParticipantRepository participantRepo,
+                                          CreneauRepository creneauRepo,
+                                          AtelierRepository atelierRepo,
+                                          AnimateurRepository animateurRepo) {
         return (args) -> {
+            System.out.println("🧹 NETTOYAGE DE LA BASE DE DONNÉES...");
+            // Order is important because of Foreign Keys!
+            // Delete children first (Creneau/Participant), then Parents (Atelier/Animateur)
+            creneauRepo.deleteAll();
+            participantRepo.deleteAll();
+            atelierRepo.deleteAll();
+            animateurRepo.deleteAll();
+            System.out.println("✨ Base vide. Début de l'insertion...");
             System.out.println("\n⚡⚡⚡ DÉBUT DU TEST INTÉGRATION (AVEC NOMS) ⚡⚡⚡\n");
 
             // 1. ANIMATEURS
