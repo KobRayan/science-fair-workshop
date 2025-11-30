@@ -108,6 +108,16 @@ public class FetescienceApplication {
                 System.out.println("❌ ÉCHEC (L'utilisateur ne devrait pas être connecté !)");
             }
 
+            System.out.println("\n🧪 TEST VALIDATION EMAIL 🧪");
+            try {
+                // Attempt to create a user with a bad email
+                Participant fake = new Participant("Hacker", "not-an-email", "1234");
+                participantService.create(fake);
+                System.out.println("❌ ERREUR : L'email invalide a été accepté (ce n'est pas normal)");
+            } catch (Exception e) {
+                System.out.println("✅ SUCCÈS : L'email invalide a été bloqué !");
+                System.out.println("   Message d'erreur : " + e.getMessage());
+            }
             System.out.println("\n✨✨✨ TEST TERMINÉ ✨✨✨");
         };
     }
