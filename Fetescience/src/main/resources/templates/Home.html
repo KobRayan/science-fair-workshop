@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -232,7 +233,7 @@
 
 <!-- Navigation avec bouton inscription -->
 <section class="nav-section">
-    <a href="nouvelle_inscription.html" class="btn-primary">
+    <a th:href="@{/nouvelle-inscription}" class="btn-primary">
         ✨ S'inscrire à un atelier
     </a>
 </section>

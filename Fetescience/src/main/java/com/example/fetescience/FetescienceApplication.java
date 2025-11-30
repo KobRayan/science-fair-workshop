@@ -23,8 +23,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.util.List;
-
 @SpringBootApplication
 public class FetescienceApplication {
 
@@ -40,17 +38,20 @@ public class FetescienceApplication {
                                           ParticipantRepository participantRepo,
                                           CreneauRepository creneauRepo,
                                           AtelierRepository atelierRepo,
-                                          AnimateurRepository animateurRepo) {
+                                          AnimateurRepository animateurRepo,
+                                          InscriptionRepository inscriptionRepo) {
         return (args) -> {
             System.out.println("🧹 NETTOYAGE DE LA BASE DE DONNÉES...");
-            // Order is important because of Foreign Keys!
-            // Delete children first (Creneau/Participant), then Parents (Atelier/Animateur)
+
+            // ⚠️ ORDRE IMPORTANT : supprimer d'abord les inscriptions !
+            inscriptionRepo.deleteAll();
             creneauRepo.deleteAll();
             participantRepo.deleteAll();
             atelierRepo.deleteAll();
             animateurRepo.deleteAll();
+
             System.out.println("✨ Base vide. Début de l'insertion...");
-            System.out.println("\n⚡⚡⚡ DÉBUT DU TEST INTÉGRATION (AVEC NOMS) ⚡⚡⚡\n");
+            System.out.println("\n⚡⚡⚡ DÉBUT DU TEST INTÉGRATION ⚡⚡⚡\n");
 
             // 1. ANIMATEURS
             Animateur anim1 = animateurService.create(new Animateur("Marie Curie"));
@@ -69,21 +70,17 @@ public class FetescienceApplication {
             Creneau c1 = new Creneau(10, 60, "Amphi A", 2);
             creneauService.addCreneauToAtelier(atelier1, c1);
 
-            // 4. PARTICIPANTS (Maintenant avec des Noms !)
+            // 4. PARTICIPANTS
             System.out.println("--- Création des Participants ---");
             Participant p1 = participantService.create(new Participant("Alice"));
-            System.out.println("Helllo");
-            //Participant p2 = participantService.create(new Participant("Bob"));
-           // Participant p3 = participantService.create(new Participant("Charlie"));
-
-            System.out.println("✅ Participants créés : " + p1.getNom());
+            System.out.println("✅ Participant créé : " + p1.getNom() + " (ID=" + p1.getId() + ")");
 
             // 5. INSCRIPTIONS
             participantService.inscrire(p1.getId(), c1.getId());
-          //  participantService.inscrire(p2.getId(), c1.getId());
 
             System.out.println("\n✨✨✨ TEST TERMINÉ ✨✨✨");
-            System.out.println("➡️ Vérifiez les noms sur http://localhost:8081/h2");
+            System.out.println("➡️ Application prête sur http://localhost:8081");
+            System.out.println("➡️ Page admin : http://localhost:8081/admin/inscriptions");
         };
     }
 }
