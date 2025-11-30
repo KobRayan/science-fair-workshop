@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <title>Nouvelle inscription - Fête de la Science</title>
 </head>
 <body>
@@ -15,18 +15,35 @@
 
     <main>
         <form id="form-inscription" method="POST" action="/inscrire_atelier">
+
+            <!-- 🆕 NOUVEAU : Informations du participant -->
             <div class="form-group">
-                <label for="code_atelier">Code de l'atelier :</label>
+                <label for="nom">Votre nom * :</label>
                 <input
                         type="text"
+                        id="nom"
+                        name="nom"
+                        required
+                        placeholder="Ex: Dupont"
+                        minlength="2">
+                <small class="help-text">
+                    Entrez votre nom de famille
+                </small>
+            </div>
+
+            <!-- Choix de l'atelier -->
+            <div class="form-group">
+                <label for="code_atelier">Atelier * :</label>
+                <select
                         id="code_atelier"
                         name="code_atelier"
-                        required
-                        placeholder="Ex: ATL001"
-                        pattern="[A-Z0-9]+"
-                        title="Le code doit contenir uniquement des lettres majuscules et des chiffres">
+                        required>
+                    <option value="">-- Sélectionnez un atelier --</option>
+                    <option value="Physique Quantique">Physique Quantique</option>
+                    <option value="Relativité">Relativité</option>
+                </select>
                 <small class="help-text">
-                    Veuillez consulter la liste des ateliers disponibles pour obtenir le code
+                    Choisissez l'atelier auquel vous souhaitez participer
                 </small>
             </div>
 

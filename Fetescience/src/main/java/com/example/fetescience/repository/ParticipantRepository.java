@@ -3,4 +3,8 @@ package com.example.fetescience.repository;
 import com.example.fetescience.model.Participant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ParticipantRepository extends JpaRepository<Participant, Long> {}
+import java.util.Optional;
+
+public interface ParticipantRepository extends JpaRepository<Participant, Long> {
+    Optional<Participant> findByNom(String nom);
+}

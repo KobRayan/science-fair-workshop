@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -64,5 +65,25 @@ public class ParticipantService {
 
         creneauRepo.save(c);
         participantRepo.save(p);
+    }
+
+    /**
+     * Trouver un participant par nom ou le créer s'il n'existe pas
+     */
+    public Participant findByNomOrCreate(String nom) {
+        // Chercher si le participant existe déjà
+        Optional<Participant> existing = participantRepo.findByNom(nom);
+
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+
+        // Sinon, créer un nouveau participant
+        Participant nouveau = new Participant(nom);
+        return participantRepo.save(nouveau);
+    }
+
+    public Optional<Participant> findById(Long id) {
+        return participantRepo.findById(id);
     }
 }
