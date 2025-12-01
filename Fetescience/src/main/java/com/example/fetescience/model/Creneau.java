@@ -24,13 +24,10 @@ public class Creneau {
     @JoinColumn(name = "atelier_id")
     private Atelier atelier;
 
-    @ManyToMany
-    @JoinTable(
-            name = "creneau_participant",
-            joinColumns = @JoinColumn(name = "creneau_id"),
-            inverseJoinColumns = @JoinColumn(name = "participant_id")
-    )
-    private Set<Participant> participants = new HashSet<>();
+
+    @OneToMany(mappedBy = "creneau", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Inscription> inscriptions = new HashSet<>();
+
 
     public Creneau() {}
 
@@ -44,7 +41,7 @@ public class Creneau {
 
     // Check if full
     public boolean isComplet() {
-        return participants.size() >= capacite;
+        return inscriptions.size() >= capacite;
     }
 
     // Check overlap
@@ -57,13 +54,13 @@ public class Creneau {
     }
 
 
-    @Override
+   /* @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Creneau creneau = (Creneau) o;
         return this.id != null && this.id.equals(creneau.id);
-    }
+    }*/
 
    /* @Override
     public int hashCode() {
