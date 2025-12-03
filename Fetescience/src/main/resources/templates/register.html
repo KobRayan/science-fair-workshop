@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <title>Créer un compte - Fête de la Science</title>
+</head>
+<body>
+<div class="container" style="max-width: 500px;">
+    <header>
+        <h1>Création de compte</h1>
+        <p class="subtitle">Rejoignez la Fête de la Science</p>
+    </header>
+
+    <main>
+        <!-- Alerts -->
+        <div th:if="${erreur}" class="alert" style="color: #721c24; background: #f8d7da; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+            <span th:text="${erreur}"></span>
+        </div>
+
+        <form method="POST" action="/auth/register">
+            <div class="form-group">
+                <label for="role">Je suis :</label>
+                <select id="role" name="role" required>
+                    <option value="PARTICIPANT">Un Participant (Visiteur)</option>
+                    <option value="ANIMATEUR">Un Animateur (Organisateur)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="nom">Nom complet :</label>
+                <input type="text" id="nom" name="nom" required placeholder="ex: Alice Dupont" minlength="2">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email :</label>
+                <!-- HTML5 Validation -->
+                <input type="email" id="email" name="email" required placeholder="ex: alice@test.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe :</label>
+                <input type="password" id="password" name="password" required minlength="4">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">S'inscrire</button>
+            </div>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <p>Déjà inscrit ? <a href="/auth/login" style="color: var(--primary-color);">Se connecter</a></p>
+        </div>
+    </main>
+</div>
+</body>
+</html>

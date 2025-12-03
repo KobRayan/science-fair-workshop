@@ -57,4 +57,12 @@ public class CreneauController {
                 ))
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    // ✅ NEW ENDPOINT: Called by JavaScript when you select an Atelier
+    @GetMapping("/api/ateliers/{atelierId}/creneaux")
+    public ResponseEntity<List<Creneau>> getCreneauxByAtelier(@PathVariable Long atelierId) {
+        // Uses the method we fixed earlier (sorted by time)
+        List<Creneau> creneaux = creneauRepository.findByAtelierIdOrderByHoraireDebutAsc(atelierId);
+        return ResponseEntity.ok(creneaux);
+    }
 }

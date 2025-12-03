@@ -4,6 +4,10 @@ import com.example.fetescience.model.Inscription;
 import com.example.fetescience.model.Participant;
 import com.example.fetescience.service.InscriptionService;
 import com.example.fetescience.service.ParticipantService;
+import com.example.fetescience.service.AtelierService;
+import com.example.fetescience.model.Personne;
+import com.example.fetescience.model.Role;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,60 +21,129 @@ public class InscriptionController {
 
     private final InscriptionService inscriptionService;
     private final ParticipantService participantService;
+    private final AtelierService atelierService;
 
     public InscriptionController(InscriptionService inscriptionService,
-                                 ParticipantService participantService) {
+                                 ParticipantService participantService,
+                                 AtelierService atelierService) {
         this.inscriptionService = inscriptionService;
         this.participantService = participantService;
+        this.atelierService = atelierService;
+    }
+    // --- 1. SHOW FORM (With Pre-filled Name) ---
+    @GetMapping("/nouvelle-inscription")
+    public String afficherFormulaireInscription(Model model, HttpSession session) {
+        // Load ateliers
+        model.addAttribute("ateliers", atelierService.listAll());
+
+        // Check if user is logged in
+        Personne user = (Personne) session.getAttribute("user");
+        if (user != null && user.getRole() == Role.PARTICIPANT) {
+            // Pre-fill the name field in the form
+            model.addAttribute("preFilledName", user.getNom());
+        }
+
+        return "nouvelle_inscription";
     }
 
+    // --- 2. PROCESS FORM (With Security Check) ---
+    @PostMapping("/inscrire_atelier")
+    public String inscrireAtelier(
+            @RequestParam String nom,
+            @RequestParam Long creneauId,
+            HttpSession session, // Get session
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            // SECURITY CHECK: Matches Session?
+            Personne user = (Personne) session.getAttribute("user");
+
+            // If logged in, the name entered MUST match the session name
+            if (user != null && user.getRole() == Role.PARTICIPANT) {
+                if (!user.getNom().equalsIgnoreCase(nom.trim())) {
+                    throw new IllegalArgumentException("Erreur de sécurité : Vous ne pouvez pas inscrire une autre personne avec votre compte.");
+                }
+            }
+
+            // Find Participant
+            Participant participant = participantService.findByNom(nom.trim())
+                    .orElseThrow(() -> new IllegalArgumentException("Participant introuvable. (Etes-vous inscrit ?)"));
+
+            // Create Inscription
+            Inscription inscription = inscriptionService.creerInscription(
+                    participant.getId(),
+                    creneauId
+            );
+
+            redirectAttributes.addFlashAttribute("succes",
+                    "Inscription réussie : " + inscription.getCreneau().getAtelier().getTitre());
+
+            return "redirect:/inscriptions/" + participant.getId();
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erreur", e.getMessage());
+            return "redirect:/nouvelle-inscription";
+        }
+    }
+
+    // ... (Keep other methods like afficherInscriptions, desinscription as they were) ...
+    // Note: Ensure afficherInscriptions uses session logic too if you want to secure it later
+
+    @GetMapping("/inscriptions/{participantId}")
+    public String afficherInscriptionsParticipant(@PathVariable Long participantId, Model model) {
+        try {
+            Participant participant = participantService.findById(participantId)
+                    .orElseThrow(() -> new RuntimeException("Participant introuvable"));
+
+            List<Inscription> inscriptions = inscriptionService.getInscriptionsByParticipant(participantId);
+
+            model.addAttribute("participant", participant);
+            model.addAttribute("inscriptions", inscriptions);
+
+            return "inscriptions";
+        } catch (Exception e) {
+            model.addAttribute("erreur", "Erreur : " + e.getMessage());
+            return "inscriptions";
+        }
+    }
+/*
     @GetMapping("/nouvelle-inscription")
     public String afficherFormulaireInscription(Model model) {
+        // ✅ We send the list of REAL ateliers from DB to the HTML
+        model.addAttribute("ateliers", atelierService.listAll());
         return "nouvelle_inscription";
     }
 
     @PostMapping("/inscrire_atelier")
     public String inscrireAtelier(
             @RequestParam String nom,
-            @RequestParam String code_atelier,
+//            @RequestParam String code_atelier,
+//            RedirectAttributes redirectAttributes) {
+            @RequestParam Long creneauId, // ✅ We now receive the specific Time Slot ID
             RedirectAttributes redirectAttributes) {
 
         try {
-            // 1. Trouver le participant existant (Recherche sécurisée)
-            // Si le participant n'existe pas, on lance une erreur (car pas de création de compte pour l'instant)
             Participant participant = participantService.findByNom(nom.trim())
-                    .orElseThrow(() -> new IllegalArgumentException("Participant '" + nom + "' introuvable. Veuillez utiliser un compte existant (ex: Alice, Bob)."));
+                    .orElseThrow(() -> new IllegalArgumentException("Participant introuvable."));
 
-            // 2. Validation
-            if (code_atelier == null || code_atelier.trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("erreur", "Le code atelier est obligatoire !");
-                return "redirect:/nouvelle-inscription";
-            }
-
-            // 3. Créer l'inscription
+            // We register using the specific ID
             Inscription inscription = inscriptionService.creerInscription(
                     participant.getId(),
-                    code_atelier.trim()
+                    creneauId
             );
 
-            // 4. Message de succès
             redirectAttributes.addFlashAttribute("succes",
-                    "Inscription réussie pour " + participant.getNom() +
-                            " à l'atelier " + inscription.getCreneau().getAtelier().getTitre() + " !");
+                    "Inscription réussie : " + inscription.getCreneau().getAtelier().getTitre() +
+                            " (" + inscription.getCreneau().getHoraireDebut() + "h)");
 
-            // 5. Rediriger vers les inscriptions de ce participant
             return "redirect:/inscriptions/" + participant.getId();
 
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erreur", e.getMessage());
             return "redirect:/nouvelle-inscription";
-
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("erreur", "Erreur lors de l'inscription.");
-            e.printStackTrace();
-            return "redirect:/nouvelle-inscription";
         }
-    }
+
+    }*/
 
     // Affichage par défaut (Pour le dev, on force l'ID 1 si aucun ID n'est fourni)
     @GetMapping("/inscriptions")
@@ -80,7 +153,7 @@ public class InscriptionController {
         return "redirect:/inscriptions/1";
     }
 
-    @GetMapping("/inscriptions/{participantId}")
+    /*@GetMapping("/inscriptions/{participantId}")
     public String afficherInscriptionsParticipant(
             @PathVariable Long participantId,
             Model model) {
@@ -106,7 +179,7 @@ public class InscriptionController {
             model.addAttribute("erreur", "Erreur : " + e.getMessage());
             return "inscriptions";
         }
-    }
+    }*/
 
     @GetMapping("/desinscription/{id}")
     @ResponseBody

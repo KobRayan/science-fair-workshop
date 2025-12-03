@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link type="text/css" rel="stylesheet" th:href="@{/css/inscription.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <title>Vos inscriptions</title>
 </head>
 <body>
+<div th:replace="~{fragments/navbar :: user-bar}"></div>
+
 <h1 id="inscription-planning">Vos inscriptions aux ateliers</h1>
 
 <div id="inscription-list">

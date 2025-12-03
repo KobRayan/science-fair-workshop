@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fête de la Science 2025 - Circuit Scientifique Bordelais</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
         * {
             margin: 0;
@@ -224,6 +225,8 @@
     </style>
 </head>
 <body>
+<div th:replace="~{fragments/navbar :: user-bar}"></div>
+
 <!-- En-tête -->
 <header class="header">
     <h1>🔬 Fête de la Science 2025</h1>

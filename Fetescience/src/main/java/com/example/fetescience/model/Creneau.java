@@ -1,5 +1,6 @@
 package com.example.fetescience.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,10 +23,12 @@ public class Creneau {
 
     @ManyToOne
     @JoinColumn(name = "atelier_id")
+    @JsonIgnore // prevent infinity loops (atelier has creneau and vice versa)
     private Atelier atelier;
 
 
     @OneToMany(mappedBy = "creneau", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Inscription> inscriptions = new HashSet<>();
 
 

@@ -59,6 +59,10 @@ public class FetescienceApplication {
             // --- 3. CRENEAUX ---
             Creneau c1 = new Creneau(10, 60, "Amphi A", 20);
             creneauService.addCreneauToAtelier(atelier1, c1);
+            Creneau c2 = new Creneau(11, 15, "Amphi B", 1);
+            creneauService.addCreneauToAtelier(atelier1, c2);
+            Creneau c3 = new Creneau(10, 60, "Salle E406", 0);
+            creneauService.addCreneauToAtelier(atelier2, c3);
 
             // --- 4. PARTICIPANTS ---
             System.out.println("--- Création des Participants ---");
