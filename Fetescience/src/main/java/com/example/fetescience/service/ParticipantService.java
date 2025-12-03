@@ -3,6 +3,8 @@ package com.example.fetescience.service;
 import com.example.fetescience.model.Inscription;
 import com.example.fetescience.model.Participant;
 import com.example.fetescience.model.Creneau;
+import com.example.fetescience.model.StatutInscription;
+import com.example.fetescience.repository.InscriptionRepository;
 import com.example.fetescience.repository.ParticipantRepository;
 import com.example.fetescience.repository.CreneauRepository;
 import org.springframework.stereotype.Service;
@@ -62,7 +64,7 @@ public class ParticipantService {
 
         // 3. Create the Inscription
         Inscription inscription = new Inscription(p, c);
-        inscription.setStatut(StatutInscription.CONFIRME);
+        inscription.setStatut(StatutInscription.VALIDEE);
 
         // 4. Save (Cascades will handle the lists, but saving explicitly is safer)
         inscriptionRepo.save(inscription);

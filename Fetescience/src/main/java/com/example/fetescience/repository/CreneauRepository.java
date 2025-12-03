@@ -10,4 +10,6 @@ public interface CreneauRepository extends JpaRepository<Creneau, Long> {
     List<Creneau> findByAtelierId(Long atelierId);
     List<Creneau> findByHoraireDebutLessThanEqualAndStatutFalse(int horaire);
     List<Creneau> findByParticipantsContainingOrderByHoraireDebutAsc(Participant participant);
+
+    List<Creneau> findByAtelierIdOrderByDateDebutAsc(Long id);
 }

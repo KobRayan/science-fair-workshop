@@ -38,4 +38,6 @@ public interface InscriptionRepository extends JpaRepository<Inscription, Long> 
      * Compter le nombre d'inscriptions pour un participant
      */
     long countByParticipant(Participant participant);
+
+    boolean existsByParticipantIdAndCreneauId(Long participantId, Long id);
 }

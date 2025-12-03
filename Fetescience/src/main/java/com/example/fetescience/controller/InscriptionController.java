@@ -56,7 +56,7 @@ public class InscriptionController {
             // 4️⃣ Message de succès
             redirectAttributes.addFlashAttribute("succes",
                     "Inscription réussie pour " + participant.getNom() +
-                            " à l'atelier " + inscription.getAtelier().getTitre() + " !");
+                            " à l'atelier " + inscription.getCreneau().getAtelier().getTitre() + " !");
 
             // 5️⃣ Rediriger vers les inscriptions de ce participant
             return "redirect:/inscriptions/" + participant.getId();

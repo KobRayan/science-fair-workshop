@@ -51,32 +51,65 @@ public class InscriptionService {
      * Créer une inscription à partir d'un titre d'atelier
      */
     public Inscription creerInscription(Long participantId, String titreAtelier) {
-        // 1. Trouver le participant
+
         Participant participant = participantRepo.findById(participantId)
                 .orElseThrow(() -> new IllegalArgumentException("Participant introuvable"));
 
-        // 2. Trouver l'atelier par son titre
         Atelier atelier = atelierRepo.findByTitre(titreAtelier)
                 .orElseThrow(() -> new IllegalArgumentException("Atelier '" + titreAtelier + "' introuvable"));
 
-        // 3. Trouver le premier créneau disponible de cet atelier
-        List<Creneau> creneaux = creneauRepo.findByAtelierId(atelier.getId());
-        
+        // Sorted by date
+        List<Creneau> creneaux =
+                creneauRepo.findByAtelierIdOrderByDateDebutAsc(atelier.getId());
+
         if (creneaux.isEmpty()) {
             throw new IllegalArgumentException("Aucun créneau disponible pour cet atelier");
         }
 
-        Creneau creneau = creneaux.get(0); // Prendre le premier créneau
+        // Find earliest non-full creneau
+        Creneau creneauDisponible = null;
 
-        // 4. Vérifier que le créneau n'est pas complet
-        if (creneau.isComplet()) {
-            throw new IllegalArgumentException("Ce créneau est complet");
+        for (Creneau c : creneaux) {
+            if (!c.isComplet()) {
+                creneauDisponible = c;
+                break;
+            }
         }
 
-        // 5. Créer l'inscription
-        Inscription inscription = new Inscription(participant, creneau, atelier);
+        if (creneauDisponible == null) {
+            throw new IllegalArgumentException("Tous les créneaux sont complets pour cet atelier");
+        }
+
+        // Shared checks
+        verifierInscriptionPossible(participantId, creneauDisponible);
+
+        // Create inscription
+        Inscription inscription = new Inscription(participant, creneauDisponible);
+
         return inscriptionRepo.save(inscription);
     }
+
+    /**
+    * Inscrit le participant depuis un creneau disponbile (l'utilisateur selectionne son créneau)
+    */
+
+public Inscription creerInscription(Long participantId, Long creneauId) {
+
+    Participant participant = participantRepo.findById(participantId)
+            .orElseThrow(() -> new IllegalArgumentException("Participant introuvable"));
+
+    Creneau creneau = creneauRepo.findById(creneauId)
+            .orElseThrow(() -> new IllegalArgumentException("Creneau introuvable"));
+
+    // Reuse shared validations
+    verifierInscriptionPossible(participantId, creneau);
+
+    // Create inscription
+    Inscription inscription = new Inscription(participant, creneau);
+
+    return inscriptionRepo.save(inscription);
+}
+
 
     /**
      * Récupérer les inscriptions d'un participant
@@ -110,4 +143,23 @@ public class InscriptionService {
         inscriptionRepo.delete(inscription);
         return true;
     }
+
+
+    ///  private helper
+    private void verifierInscriptionPossible(Long participantId, Creneau creneau) {
+
+        // Participant already exists (should be checked before calling)
+        if (creneau.isComplet()) {
+            throw new IllegalArgumentException("Ce créneau est complet");
+        }
+
+        // Check duplicate: participant already in THIS creneau
+        boolean dejaInscrit = inscriptionRepo
+                .existsByParticipantIdAndCreneauId(participantId, creneau.getId());
+
+        if (dejaInscrit) {
+            throw new IllegalArgumentException("Participant déjà inscrit à ce créneau");
+        }
+    }
+
 }

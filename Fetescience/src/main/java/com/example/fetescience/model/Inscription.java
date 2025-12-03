@@ -40,12 +40,12 @@ public class Inscription {
     }
     
 
-    public Inscription(Participant participant, Creneau creneau, Atelier atelier) {
+    public Inscription(Participant participant, Creneau creneau) {
         this();
         this.participant = participant;
         this.creneau = creneau;
     }
-    
+
     /**
      * Vérifie si l'inscription peut être annulée
      * (au moins 2 jours avant le créneau)
