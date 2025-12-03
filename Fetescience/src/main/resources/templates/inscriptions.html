@@ -15,7 +15,7 @@
          class="inscription"
          th:attr="id-inscription=${inscription.id}">
         <table>
-            <tr><td>Titre</td><td th:text="${inscription.atelier.titre}">Titre</td></tr>
+            <tr><td>Titre</td><td th:text="${inscription.creneau.atelier.titre}">Titre</td></tr>
             <tr><td>Créneau</td><td th:text="${inscription.creneau.horaireDebut} + 'h'">Horaire</td></tr>
             <tr><td>Lieu</td><td th:text="${inscription.creneau.lieu}">Lieu</td></tr>
             <tr><td>Durée</td><td th:text="${inscription.creneau.duree} + ' min'">Durée</td></tr>

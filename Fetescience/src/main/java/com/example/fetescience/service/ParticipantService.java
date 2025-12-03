@@ -42,6 +42,17 @@ public class ParticipantService {
                 .orElseThrow(() -> new RuntimeException("Participant not found with ID: " + id));
     }
 
+    public Optional<Participant> findById(Long id) {
+        return participantRepo.findById(id);
+    }
+    /**
+     * Recherche un participant par son nom.
+     */
+    public Optional<Participant> findByNom(String nom) {
+        return participantRepo.findByNom(nom);
+    }
+
+
     // --- BUSINESS LOGIC (INSCRIPTIONS) ---
 
     public void inscrire(Long participantId, Long creneauId) {

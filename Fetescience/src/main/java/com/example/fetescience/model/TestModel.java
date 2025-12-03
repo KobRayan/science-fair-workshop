@@ -1,4 +1,4 @@
-package com.example.fetescience.model;
+/*package com.example.fetescience.model;
 
 
 public class TestModel {
@@ -53,7 +53,7 @@ public class TestModel {
         System.out.println("\n5. Test Inscriptions :");
 
         // P1 s'inscrit
-        p1.addCreneau(c1);
+        //p1.addCreneau(c1);
         System.out.println("   - " + p1.getNom() + " inscrit à " + c1.getAtelier().getTitre());
 
         // Vérification de l'héritage (Méthodes de Personne)
@@ -63,4 +63,4 @@ public class TestModel {
 
         System.out.println("\n=== FIN DU TEST ===");
     }
-}
+}*/

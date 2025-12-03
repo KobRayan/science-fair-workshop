@@ -16,9 +16,8 @@ import java.util.List;
 public class InscriptionController {
 
     private final InscriptionService inscriptionService;
-    private final ParticipantService participantService;  // 🆕 AJOUTÉ
+    private final ParticipantService participantService;
 
-    // 🆕 CONSTRUCTEUR MODIFIÉ avec les 2 services
     public InscriptionController(InscriptionService inscriptionService,
                                  ParticipantService participantService) {
         this.inscriptionService = inscriptionService;
@@ -37,28 +36,29 @@ public class InscriptionController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            // 1️⃣ Trouver ou créer le participant
-            Participant participant = participantService.findByNomOrCreate(nom.trim());
+            // 1. Trouver le participant existant (Recherche sécurisée)
+            // Si le participant n'existe pas, on lance une erreur (car pas de création de compte pour l'instant)
+            Participant participant = participantService.findByNom(nom.trim())
+                    .orElseThrow(() -> new IllegalArgumentException("Participant '" + nom + "' introuvable. Veuillez utiliser un compte existant (ex: Alice, Bob)."));
 
-            // 2️⃣ Validation
+            // 2. Validation
             if (code_atelier == null || code_atelier.trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("erreur",
-                        "Le code atelier est obligatoire !");
+                redirectAttributes.addFlashAttribute("erreur", "Le code atelier est obligatoire !");
                 return "redirect:/nouvelle-inscription";
             }
 
-            // 3️⃣ Créer l'inscription
+            // 3. Créer l'inscription
             Inscription inscription = inscriptionService.creerInscription(
                     participant.getId(),
                     code_atelier.trim()
             );
 
-            // 4️⃣ Message de succès
+            // 4. Message de succès
             redirectAttributes.addFlashAttribute("succes",
                     "Inscription réussie pour " + participant.getNom() +
                             " à l'atelier " + inscription.getCreneau().getAtelier().getTitre() + " !");
 
-            // 5️⃣ Rediriger vers les inscriptions de ce participant
+            // 5. Rediriger vers les inscriptions de ce participant
             return "redirect:/inscriptions/" + participant.getId();
 
         } catch (IllegalArgumentException e) {
@@ -66,46 +66,27 @@ public class InscriptionController {
             return "redirect:/nouvelle-inscription";
 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("erreur",
-                    "Erreur lors de l'inscription. Veuillez réessayer.");
+            redirectAttributes.addFlashAttribute("erreur", "Erreur lors de l'inscription.");
             e.printStackTrace();
             return "redirect:/nouvelle-inscription";
         }
     }
 
+    // Affichage par défaut (Pour le dev, on force l'ID 1 si aucun ID n'est fourni)
     @GetMapping("/inscriptions")
-    public String afficherInscriptions(Model model) {
-        try {
-            Long participantId = 1L;
-            List<Inscription> inscriptions =
-                    inscriptionService.getInscriptionsByParticipant(participantId);
-
-            model.addAttribute("inscriptions", inscriptions);
-
-            if (inscriptions.isEmpty()) {
-                model.addAttribute("message",
-                        "Vous n'avez aucune inscription pour le moment.");
-            }
-
-            return "inscriptions";
-
-        } catch (Exception e) {
-            model.addAttribute("erreur",
-                    "Erreur lors du chargement de vos inscriptions.");
-            e.printStackTrace();
-            return "inscriptions";
-        }
+    public String afficherInscriptionsDefaut(Model model) {
+        // En mode dev, on redirige vers le participant 1 (Alice normalement)
+        // ou on affiche une page vide.
+        return "redirect:/inscriptions/1";
     }
 
-    /**
-     * 🆕 AFFICHER LES INSCRIPTIONS D'UN PARTICIPANT SPÉCIFIQUE
-     */
     @GetMapping("/inscriptions/{participantId}")
     public String afficherInscriptionsParticipant(
             @PathVariable Long participantId,
             Model model) {
 
         try {
+            // Utilise la méthode findById du service (retourne Optional)
             Participant participant = participantService.findById(participantId)
                     .orElseThrow(() -> new RuntimeException("Participant introuvable"));
 
@@ -116,14 +97,13 @@ public class InscriptionController {
             model.addAttribute("inscriptions", inscriptions);
 
             if (inscriptions.isEmpty()) {
-                model.addAttribute("message",
-                        "Aucune inscription pour le moment.");
+                model.addAttribute("message", "Aucune inscription pour le moment.");
             }
 
             return "inscriptions";
 
         } catch (Exception e) {
-            model.addAttribute("erreur", e.getMessage());
+            model.addAttribute("erreur", "Erreur : " + e.getMessage());
             return "inscriptions";
         }
     }
@@ -132,24 +112,23 @@ public class InscriptionController {
     @ResponseBody
     public ResponseEntity<String> seDesinscrire(@PathVariable Long id) {
         try {
+            // TODO: Dans le futur, récupérer l'ID du participant connecté
+            // Pour l'instant, on suppose que c'est l'utilisateur ID 1 (Alice)
             Long participantId = 1L;
+
             boolean succes = inscriptionService.supprimerInscription(id, participantId);
 
             if (succes) {
                 return ResponseEntity.ok("Désinscription réussie");
             } else {
-                return ResponseEntity.status(404)
-                        .body("Inscription non trouvée");
+                return ResponseEntity.status(404).body("Inscription non trouvée");
             }
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400)
-                    .body(e.getMessage());
-
+            return ResponseEntity.status(400).body(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(500)
-                    .body("Erreur serveur : " + e.getMessage());
+            return ResponseEntity.status(500).body("Erreur serveur : " + e.getMessage());
         }
     }
 }

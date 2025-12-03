@@ -60,7 +60,7 @@ public class InscriptionService {
 
         // Sorted by date
         List<Creneau> creneaux =
-                creneauRepo.findByAtelierIdOrderByDateDebutAsc(atelier.getId());
+                creneauRepo.findByAtelierIdOrderByHoraireDebutAsc(atelier.getId());
 
         if (creneaux.isEmpty()) {
             throw new IllegalArgumentException("Aucun créneau disponible pour cet atelier");

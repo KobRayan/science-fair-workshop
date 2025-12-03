@@ -53,7 +53,7 @@ public class CreneauController {
         return participantRepository.findById(idParticipant)
                 .map(p -> ResponseEntity.ok(
                         creneauRepository
-                                .findByParticipantsContainingOrderByHoraireDebutAsc(p)
+                        .findByInscriptions_ParticipantOrderByHoraireDebutAsc(p)
                 ))
                 .orElse(ResponseEntity.notFound().build());
     }

@@ -195,7 +195,7 @@
                 <tr th:each="inscription : ${inscriptions}">
                     <td th:text="${inscription.id}">1</td>
                     <td th:text="${inscription.participant.nom}">Alice</td>
-                    <td th:text="${inscription.atelier.titre}">Physique Quantique</td>
+                    <td th:text="${inscription.creneau.atelier.titre}">Physique Quantique</td>
                     <td th:text="${inscription.creneau.horaireDebut + 'h - ' + inscription.creneau.lieu}">10h - Amphi A</td>
                     <td th:text="${#temporals.format(inscription.dateInscription, 'dd/MM/yyyy HH:mm')}">30/11/2025 14:30</td>
                     <td>

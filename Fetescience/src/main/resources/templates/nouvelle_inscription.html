@@ -14,33 +14,37 @@
     </header>
 
     <main>
+        <div th:if="${erreur}" class="alert alert-danger"
+             style="color: #721c24; background-color: #f8d7da; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+            <span th:text="${erreur}"></span>
+        </div>
+
         <form id="form-inscription" method="POST" action="/inscrire_atelier">
 
-            <!-- 🆕 NOUVEAU : Informations du participant -->
             <div class="form-group">
-                <label for="nom">Votre nom * :</label>
+                <label for="nom">Votre Nom :</label>
                 <input
                         type="text"
                         id="nom"
                         name="nom"
                         required
-                        placeholder="Ex: Dupont"
-                        minlength="2">
+                        placeholder="Ex: Alice"
+                        title="Veuillez utiliser un nom existant (Alice, Bob, Charlie)">
                 <small class="help-text">
-                    Entrez votre nom de famille
+                    (Pour le test, utilisez : Alice, Bob ou Charlie)
                 </small>
             </div>
 
-            <!-- Choix de l'atelier -->
             <div class="form-group">
-                <label for="code_atelier">Atelier * :</label>
-                <select
-                        id="code_atelier"
-                        name="code_atelier"
-                        required>
+                <label for="code_atelier">Atelier :</label>
+                <select id="code_atelier" name="code_atelier" required>
                     <option value="">-- Sélectionnez un atelier --</option>
+
                     <option value="Physique Quantique">Physique Quantique</option>
                     <option value="Relativité">Relativité</option>
+
+                    <option value="Cybersécurité">Cybersécurité</option>
+                    <option value="Intelligence Artificielle">Intelligence Artificielle</option>
                 </select>
                 <small class="help-text">
                     Choisissez l'atelier auquel vous souhaitez participer
@@ -57,14 +61,13 @@
             <h2>Informations importantes</h2>
             <ul>
                 <li>Chaque atelier dispose d'un nombre de places limité</li>
-                <li>Vous recevrez une confirmation par email</li>
                 <li>L'inscription doit être validée par le laboratoire</li>
             </ul>
         </div>
     </main>
 
     <footer>
-        <p>&copy; 2024 CNRS - Circuit Scientifique Bordelais</p>
+        <p>&copy; 2025 CNRS - Circuit Scientifique Bordelais</p>
     </footer>
 </div>
 </body>

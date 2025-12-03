@@ -57,7 +57,7 @@ public class FetescienceApplication {
             atelierService.create(atelier2);
 
             // --- 3. CRENEAUX ---
-            Creneau c1 = new Creneau(10, 60, "Amphi A", 2);
+            Creneau c1 = new Creneau(10, 60, "Amphi A", 20);
             creneauService.addCreneauToAtelier(atelier1, c1);
 
             // --- 4. PARTICIPANTS ---
@@ -74,8 +74,8 @@ public class FetescienceApplication {
             System.out.println("✅ Participants créés : " + p1.getNom() + ", " + p2.getNom() + ", " + p3.getNom());
 
             // --- 5. INSCRIPTIONS ---
-            participantService.inscrire(p1.getId(), c1.getId());
-            participantService.inscrire(p2.getId(), c1.getId());
+          //  participantService.inscrire(p1.getId(), c1.getId());
+            //participantService.inscrire(p2.getId(), c1.getId());
             System.out.println("✅ Inscriptions effectuées.");
 
             // --- 6. TEST AUTHENTIFICATION ---
