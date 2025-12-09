@@ -1,82 +1,74 @@
 package com.example.fetescience.model;
 
 import jakarta.persistence.*;
-
+import lombok.Getter;
+import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Entity
-public class Participant {
-    @Id
-    @Column(nullable = false)
-    private String id_participant;
+@Getter @Setter
+public class Participant extends Personne{
 
-    @ManyToMany(mappedBy = "participants") /// dire que la table est gérée depuis Creneau!
-    private Set<Creneau> choix = new HashSet<>(); /// a revoir les many to many et les autres annotations
 
-    public Participant(String id_participant) {
-        this.id_participant = id_participant;
-    }
+    @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Inscription> inscriptions = new HashSet<>();
 
     public Participant() {
+        super();
+        this.setRole(Role.PARTICIPANT);
     }
 
-    /*public void inscrire(Atelier a, Creneau c) {
-        if (!choix.contains(c)) {
-            choix.add(c);
-            //a.ajouterParticipant(this,c); // essayons une autre facon
+    public Participant(String nom, String email, String password) {
+        super(nom, email, password, Role.PARTICIPANT);
+    }
 
-            System.out.println(idAnimateur + " inscrit à l’atelier " + a.getNom() + " sur le créneau " + c);
-        } else {
-            System.out.println("Déjà inscrit à ce créneau !");
-        }
-    }*/
+    // Helper methods for synchronization
+    public void ajouterInscription(Inscription i) {
+        inscriptions.add(i);
+        i.setParticipant(this);
+    }
 
-    /// //// **************** peut etre comme ca car atelier depuis creneau?
-    public void inscrire(Creneau c) {
-        if (!choix.contains(c)) {
-            choix.add(c);
-            c.occuper(this);
+    // Replaces the old removeCreneau logic
+    public void supprimerInscription(Inscription i) {
+        if (i != null && inscriptions.contains(i)) {
+            this.inscriptions.remove(i);
+            i.setParticipant(null);
 
-            System.out.println(id_participant + " inscrit à l’atelier " + c.getAtelier().getTitre() + " sur le créneau " + c);
-        } else {
-            System.out.println("Déjà inscrit à ce créneau !");
+            // 3. Remove from the Creneau's list (Bidirectional consistency)
+            if (i.getCreneau() != null) {
+                i.getCreneau().getInscriptions().remove(i);
+            }
         }
     }
 
+    public void desinscrireDuCreneau(Creneau c) {
+        // Find the inscription that links THIS participant to THAT creneau
+        Inscription inscriptionToRemove = null;
 
-  /*  public void desinscrire(Atelier a, Creneau c) {
-
-        if (choix.remove(c)) {
-            a.retirerParticipant(this, c);
-            System.out.println(id_animateur + " désinscrit de " + a.getNom());
-        } else {
-            System.out.println("Non inscrit à ce créneau.");
-        }
-    }*/
-
-    /// ********************** alternative ??
-    public void desinscrire(Creneau c) {
-
-        if (choix.contains(c)) {
-            c.liberer(this);
-            choix.remove(c);
-            System.out.println(id_participant + " désinscrit de " + c.getAtelier().getTitre());
-        } else {
-            System.out.println("Non inscrit à ce créneau.");
+        for (Inscription i : this.inscriptions) {
+            if (i.getCreneau().equals(c)) {
+                inscriptionToRemove = i;
+                break;
+            }
         }
 
-
+        // If found, delete it safely
+        if (inscriptionToRemove != null) {
+            supprimerInscription(inscriptionToRemove);
+        }
     }
 
+/*@Override
+public boolean equals(Object o) {
+    if (this == o) return true;  // même object
+    if (!(o instanceof Participant)) return false;
+    Participant participant = (Participant) o;
+    return this.getId() != null && this.getId().equals(participant.getId());
+}*/
 
-    @Override
-    public String toString() {
-        return "Id_participant : " + id_participant + "choix : " + choix;
-    }
-
-    public String afficherChoix() {
-        return "Liste des créneaux : " + choix;
-    }
+/*@Override
+public int hashCode() {
+    return id != null ? id.hashCode() : 0;
+}*/
 }

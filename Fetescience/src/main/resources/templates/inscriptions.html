@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/inscription.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Vos inscriptions</title>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: user-bar}"></div>
+
+<h1 id="inscription-planning">Vos inscriptions aux ateliers</h1>
+
+<div id="inscription-list">
+    <!-- Inscription 1 : Date éloignée (plus de 2 jours) - Bouton visible -->
+    <div th:each="inscription : ${inscriptions}"
+         class="inscription"
+         th:attr="id-inscription=${inscription.id}">
+        <table>
+            <tr><td>Titre</td><td th:text="${inscription.creneau.atelier.titre}">Titre</td></tr>
+            <tr><td>Créneau</td><td th:text="${inscription.creneau.horaireDebut} + 'h'">Horaire</td></tr>
+            <tr><td>Lieu</td><td th:text="${inscription.creneau.lieu}">Lieu</td></tr>
+            <tr><td>Durée</td><td th:text="${inscription.creneau.duree} + ' min'">Durée</td></tr>
+            <tr><td>Statut</td><td th:text="${inscription.statut}">Statut</td></tr>
+        </table>
+        <button class="btn-desinscription">Se désinscrire</button>
+    </div>
+</div>
+
+<script th:src="@{/js/inscriptions.js}"></script>
+</body>
+</html>

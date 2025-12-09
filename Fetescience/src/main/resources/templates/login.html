@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Connexion - Fête de la Science</title>
+</head>
+<body>
+<div class="container" style="max-width: 500px;">
+    <header>
+        <h1>Connexion</h1>
+        <p class="subtitle">Accédez à votre espace personnel</p>
+    </header>
+
+    <main>
+        <!-- Alerts -->
+        <div th:if="${erreur}" class="alert" style="color: #721c24; background: #f8d7da; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+            <span th:text="${erreur}"></span>
+        </div>
+        <div th:if="${succes}" class="alert" style="color: #155724; background: #d4edda; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+            <span th:text="${succes}"></span>
+        </div>
+
+        <form method="POST" action="/auth/login">
+            <div class="form-group">
+                <label for="email">Email :</label>
+                <!-- HTML5 Validation: type="email" ensures @something.something format -->
+                <input type="email" id="email" name="email" required placeholder="ex: alice@test.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe :</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Se connecter</button>
+            </div>
+        </form>
+
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+        <div style="text-align: center;">
+            <p>Pas encore de compte ?</p>
+            <a href="/auth/register" style="color: var(--primary-color); font-weight: bold; text-decoration: none;">Créer un compte</a>
+        </div>
+        <div style="text-align: center; margin-top: 15px;">
+            <a href="/" style="color: #6c757d; text-decoration: none; font-size: 0.9em;">← Retour à l'accueil</a>
+        </div>
+    </main>
+</div>
+</body>
+</html>

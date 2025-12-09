@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Administration - Inscriptions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f8f9ff;
+        }
+
+        .statut {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .statut.EN_ATTENTE {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .statut.VALIDEE {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .statut.REFUSEE {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-accept {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-accept:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-refuse {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-refuse:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+            font-size: 1.2em;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Administration des Inscriptions</h1>
+        <p class="subtitle">Gérez toutes les inscriptions aux ateliers</p>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" th:text="${inscriptions.size()}">0</div>
+                <div class="stat-label">Total Inscriptions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${#lists.size(inscriptions.?[statut.name() == 'EN_ATTENTE'])}">0</div>
+                <div class="stat-label">En Attente</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${#lists.size(inscriptions.?[statut.name() == 'VALIDEE'])}">0</div>
+                <div class="stat-label">Validées</div>
+            </div>
+        </div>
+
+        <div th:if="${inscriptions.isEmpty()}" class="no-data">
+            📭 Aucune inscription pour le moment
+        </div>
+
+        <table th:if="${!inscriptions.isEmpty()}">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Participant</th>
+                    <th>Atelier</th>
+                    <th>Créneau</th>
+                    <th>Date Inscription</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="inscription : ${inscriptions}">
+                    <td th:text="${inscription.id}">1</td>
+                    <td th:text="${inscription.participant.nom}">Alice</td>
+                    <td th:text="${inscription.creneau.atelier.titre}">Physique Quantique</td>
+                    <td th:text="${inscription.creneau.horaireDebut + 'h - ' + inscription.creneau.lieu}">10h - Amphi A</td>
+                    <td th:text="${#temporals.format(inscription.dateInscription, 'dd/MM/yyyy HH:mm')}">30/11/2025 14:30</td>
+                    <td>
+                        <span class="statut" th:classappend="${inscription.statut.name()}" th:text="${inscription.statut}">EN_ATTENTE</span>
+                    </td>
+                    <td>
+                        <div class="actions">
+                            <form th:action="@{/admin/inscriptions/{id}/accepter(id=${inscription.id})}" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-accept" th:disabled="${inscription.statut.name() == 'VALIDEE'}">
+                                    ✓ Accepter
+                                </button>
+                            </form>
+                            <form th:action="@{/admin/inscriptions/{id}/refuser(id=${inscription.id})}" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-refuse" th:disabled="${inscription.statut.name() == 'REFUSEE'}">
+                                    ✗ Refuser
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
