@@ -5,6 +5,7 @@ import com.example.fetescience.model.Role;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.ui.Model;
 
 @Controller
 public class HomeController {
@@ -26,6 +27,16 @@ public class HomeController {
 
         return "animateur_page";
     }
+
+
+    @GetMapping("/test-error")
+    public String testError(Model model) {
+        // We manually add the attributes that Spring usually adds automatically
+        model.addAttribute("status", 500);
+        model.addAttribute("error", "NullPointerException: Le système a rencontré un problème inattendu.");
+        return "error"; // Looks for src/main/resources/templates/error.html
+    }
+
 
     // (Note: nouvelle-inscription security should ideally be handled in InscriptionController similarly)
 }

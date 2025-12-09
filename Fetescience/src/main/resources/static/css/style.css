@@ -108,6 +108,7 @@ header h1 {
 }
 
 .btn {
+    display: inline-block;
     padding: 12px 30px;
     border: none;
     border-radius: var(--border-radius);
@@ -228,6 +229,7 @@ footer {
     color: var(--primary-color);
     font-weight: 600;
     transition: all 0.2s;
+
 }
 
 .btn-sm:hover {
@@ -237,10 +239,34 @@ footer {
 .btn-highlight {
     background-color: var(--primary-color);
     color: white !important;
+    border: none;
+
+    /* Add margin to prevent overlapping neighbors due to scale */
+
+
+    /* Smooth Animation */
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+
 .btn-highlight:hover {
-    background-color: #003d7a;
+    background-color: #003d7a; /* Darker blue */
+    transform: scale(1.1);
+    box-shadow: 0 8px 15px rgba(0, 81, 165, 0.3); /* Big shadow */
+    z-index: 10; /* Ensure it pops over everything else */
+    cursor: pointer;
+}
+.btn-highlightwhite {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.btn-highlightwhite:hover {
+    background-color: #f0f4f8;
+    transform: scale(1.1);
+    box-shadow: 0 8px 15px rgba(0, 81, 165, 0.3); /* Big shadow */
+    z-index: 10; /* Ensure it pops over everything else */
+    cursor: pointer;
 }
 
 .btn-outline {
@@ -251,4 +277,33 @@ footer {
 .btn-outline:hover {
     background-color: #dc3545;
     color: white !important;
+}
+
+.logo-container {
+    display: inline-block;
+    /* 1. Default State: Zoom 120% */
+    transform: scale(1.2);
+    /* Make sure it has space */
+    margin-left: 15px;
+
+    /* Smooth Animation */
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 2. Hover State: Zoom 140% + "Pop" */
+.logo-container:hover {
+    transform: scale(1.4);
+    z-index: 10;
+    cursor: pointer;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    padding: 15px 0;
+    border-top: 1px solid #ddd;
+    z-index: 1000;
 }

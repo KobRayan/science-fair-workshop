@@ -3,29 +3,38 @@
 <body>
 <div th:fragment="user-bar" class="user-bar">
     <div class="user-bar-content">
-        <!-- OPTION A: LOGGED IN -->
-        <div th:if="${session.user != null}" class="user-info">
-            <span>👋 Bonjour, <strong th:text="${session.user.nom}">User</strong></span>
+        <div style="flex-grow: 1; display: flex; justify-content: flex-end; align-items: center; gap: 15px;">
 
-            <!-- Dashboard Link based on Role -->
-            <a th:if="${session.user.role.name() == 'PARTICIPANT'}"
-               th:href="@{'/inscriptions/' + ${session.user.id}}" class="btn-sm">
-                Mes Inscriptions
-            </a>
-            <a th:if="${session.user.role.name() == 'ANIMATEUR'}"
-               href="/animateur-page" class="btn-sm">
-                Espace Animateur
-            </a>
+            <!-- OPTION A: LOGGED IN -->
+            <div th:if="${session.user != null}" class="user-info">
+                <span>👋 Bonjour, <strong th:text="${session.user.nom}">User</strong></span>
 
-            <a href="/auth/logout" class="btn-sm btn-outline">Déconnexion</a>
+                <!-- Dashboard Link based on Role -->
+                <a th:if="${session.user.role.name() == 'PARTICIPANT'}"
+                   th:href="@{'/inscriptions/' + ${session.user.id}}" class="btn-sm">
+                    Mes Inscriptions
+                </a>
+                <a th:if="${session.user.role.name() == 'ANIMATEUR'}"
+                   href="/animateur_page" class="btn-sm">
+                    Espace Animateur
+                </a>
+
+                <a href="/auth/logout" class="btn-sm btn-outline">Déconnexion</a>
+            </div>
+
+            <!-- OPTION B: NOT LOGGED IN -->
+            <div th:if="${session.user == null}" class="auth-buttons">
+                <a href="/auth/login" class="btn-sm btn-highlightwhite">Se connecter</a>
+                <a href="/auth/register" class="btn-sm btn-highlight">Créer un compte</a>
+            </div>
         </div>
+        <a href="/" class="logo-container" title="Retour à l'accueil" style="margin-left: 20px;">
+            <img th:src="@{/images/home_icon.png}" alt="Accueil"
+                 style="height: 30px; width: auto; vertical-align: middle;">
+        </a>
 
-        <!-- OPTION B: NOT LOGGED IN -->
-        <div th:if="${session.user == null}" class="auth-buttons">
-            <a href="/auth/login" class="btn-sm">Se connecter</a>
-            <a href="/auth/register" class="btn-sm btn-highlight">Créer un compte</a>
-        </div>
     </div>
+
 </div>
 </body>
 </html>
