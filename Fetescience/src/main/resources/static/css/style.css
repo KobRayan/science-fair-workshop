@@ -297,7 +297,7 @@ footer {
     cursor: pointer;
 }
 
-.footer {
+/*.footer {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -306,4 +306,4 @@ footer {
     padding: 15px 0;
     border-top: 1px solid #ddd;
     z-index: 1000;
-}
+}*/
