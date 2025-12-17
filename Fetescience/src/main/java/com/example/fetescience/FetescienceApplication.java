@@ -48,21 +48,37 @@ public class FetescienceApplication {
             animateurService.create(anim2);
 
             // --- 2. ATELIERS ---
-            Atelier atelier1 = new Atelier("Physique Quantique");
+            Atelier atelier1 = new Atelier("RG");
             atelier1.setAnimateur(anim1);
             atelierService.create(atelier1);
 
-            Atelier atelier2 = new Atelier("Relativité");
+            Atelier atelier2 = new Atelier("Dassault");
             atelier2.setAnimateur(anim2);
             atelierService.create(atelier2);
+
+            Atelier atelier3 = new Atelier("Fanuc");
+            atelier1.setAnimateur(anim1);
+            atelierService.create(atelier3);
+
+            Atelier atelier4 = new Atelier("Robotech");
+            atelier2.setAnimateur(anim1);
+            atelierService.create(atelier4);
 
             // --- 3. CRENEAUX ---
             Creneau c1 = new Creneau(10, 60, "Amphi A", 20);
             creneauService.addCreneauToAtelier(atelier1, c1);
             Creneau c2 = new Creneau(11, 15, "Amphi B", 1);
             creneauService.addCreneauToAtelier(atelier1, c2);
-            Creneau c3 = new Creneau(10, 60, "Salle E406", 0);
+            Creneau c3 = new Creneau(10, 60, "Salle E406", 8);
             creneauService.addCreneauToAtelier(atelier2, c3);
+
+            Creneau c4 = new Creneau(12, 60, "Salle E406", 0);
+            creneauService.addCreneauToAtelier(atelier3, c4);
+
+            Creneau c5 = new Creneau(9, 15, "Salle A209", 2);
+            creneauService.addCreneauToAtelier(atelier3, c5);
+            Creneau c6 = new Creneau(10, 15, "Salle C244", 2);
+            creneauService.addCreneauToAtelier(atelier3, c6);
 
             // --- 4. PARTICIPANTS ---
             System.out.println("--- Création des Participants ---");

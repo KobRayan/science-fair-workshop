@@ -40,11 +40,15 @@ public class Creneau {
         this.lieu = lieu;
         this.capacite = capacite;
         this.statut = false;
+
+        if(this.capacite ==0){
+            this.statut = true;
+        }
     }
 
     // Check if full
     public boolean isComplet() {
-        return inscriptions.size() >= capacite;
+            return inscriptions.size() >= capacite;
     }
 
     // Check overlap
@@ -55,7 +59,6 @@ public class Creneau {
         int debutAutre = autre.horaireDebut * 60;
         return (debutThis < finAutre) && (finThis > debutAutre);
     }
-
 
    /* @Override
     public boolean equals(Object o) {
