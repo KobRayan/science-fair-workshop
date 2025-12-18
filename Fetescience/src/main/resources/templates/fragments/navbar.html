@@ -7,7 +7,7 @@
 
             <!-- OPTION A: LOGGED IN -->
             <div th:if="${session.user != null}" class="user-info">
-                <span>👋 Bonjour, <strong th:text="${session.user.nom}">User</strong></span>
+                <span> Bonjour, <strong th:text="${session.user.nom}">User</strong></span>
 
                 <!-- Dashboard Link based on Role -->
                 <a th:if="${session.user.role.name() == 'PARTICIPANT'}"
