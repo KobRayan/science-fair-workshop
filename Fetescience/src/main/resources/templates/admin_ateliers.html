@@ -59,6 +59,32 @@
             border: 1px solid #f5c6cb;
         }
 
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
         .tabs {
             display: flex;
             gap: 10px;
@@ -288,32 +314,6 @@
             font-weight: 600;
             font-size: 1.1em;
         }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-        }
-
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
-            margin-top: 5px;
-        }
     </style>
 </head>
 <body>
@@ -321,7 +321,6 @@
     <h1>🔬 Administration des Ateliers</h1>
     <p class="subtitle">Gérez les ateliers, créneaux et capacités</p>
 
-    <!-- Messages -->
     <div th:if="${success}" class="alert alert-success">
         ✅ <span th:text="${success}"></span>
     </div>
@@ -329,7 +328,6 @@
         ❌ <span th:text="${error}"></span>
     </div>
 
-    <!-- Statistiques -->
     <div class="stats">
         <div class="stat-card">
             <div class="stat-number" th:text="${ateliers != null ? ateliers.size() : 0}">0</div>
@@ -349,13 +347,11 @@
         </div>
     </div>
 
-    <!-- Tabs -->
     <div class="tabs">
-        <button class="tab active" onclick="switchTab('ateliers')">📋 Ateliers & Créneaux</button>
-        <button class="tab" onclick="switchTab('ajouter')">➕ Ajouter un Créneau</button>
+        <button class="tab active" onclick="switchTab('ateliers', this)">📋 Ateliers & Créneaux</button>
+        <button class="tab" onclick="switchTab('ajouter', this)">➕ Ajouter un Créneau</button>
     </div>
 
-    <!-- Tab Content: Liste des Ateliers -->
     <div id="ateliers-tab" class="tab-content active">
         <div class="atelier-grid">
             <div th:each="atelier : ${ateliers}" class="atelier-card">
@@ -387,7 +383,8 @@
                                 <span th:text="${creneau.capacite - creneau.inscriptions.size()}">10</span> places
                             </span>
                             <button class="btn btn-edit"
-                                    th:onclick="'editCreneau(' + ${creneau.id} + ', ' + ${creneau.capacite} + ', ' + ${creneau.horaireDebut} + ', \'' + ${creneau.lieu} + '\', ' + ${creneau.duree} + ')'">
+                                    th:attr="data-id=${creneau.id}, data-capacite=${creneau.capacite}, data-horaire=${creneau.horaireDebut}, data-lieu=${creneau.lieu}, data-duree=${creneau.duree}"
+                                    onclick="editCreneauFromButton(this)">
                                 ✏️ Modifier
                             </button>
                         </div>
@@ -397,7 +394,6 @@
         </div>
     </div>
 
-    <!-- Tab Content: Ajouter un Créneau -->
     <div id="ajouter-tab" class="tab-content">
         <form th:action="@{/admin/ateliers/creneaux/ajouter}" method="post" style="max-width: 600px; margin: 0 auto;">
             <h2 style="color: #667eea; margin-bottom: 30px;">➕ Ajouter un nouveau créneau</h2>
@@ -438,13 +434,11 @@
         </form>
     </div>
 
-    <!-- Lien retour -->
     <div class="back-link">
         <a th:href="@{/}">← Retour à l'accueil</a>
     </div>
 </div>
 
-<!-- Modal pour modifier un créneau -->
 <div id="editModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -487,18 +481,26 @@
 </div>
 
 <script>
-    function switchTab(tabName) {
-        // Hide all tabs
+    function switchTab(tabName, clickedButton) {
         document.querySelectorAll('.tab-content').forEach(tab => {
             tab.classList.remove('active');
         });
         document.querySelectorAll('.tab').forEach(tab => {
             tab.classList.remove('active');
         });
-
-        // Show selected tab
         document.getElementById(tabName + '-tab').classList.add('active');
-        event.target.classList.add('active');
+        if (clickedButton) {
+            clickedButton.classList.add('active');
+        }
+    }
+
+    function editCreneauFromButton(button) {
+        const id = button.getAttribute('data-id');
+        const capacite = button.getAttribute('data-capacite');
+        const horaire = button.getAttribute('data-horaire');
+        const lieu = button.getAttribute('data-lieu');
+        const duree = button.getAttribute('data-duree');
+        editCreneau(id, capacite, horaire, lieu, duree);
     }
 
     function editCreneau(id, capacite, horaire, lieu, duree) {
@@ -521,7 +523,6 @@
         form.submit();
     }
 
-    // Close modal on outside click
     document.getElementById('editModal').addEventListener('click', function(e) {
         if (e.target === this) {
             closeModal();

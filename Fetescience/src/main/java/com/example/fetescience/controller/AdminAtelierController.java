@@ -26,15 +26,11 @@ public class AdminAtelierController {
         this.creneauRepository = creneauRepository;
     }
 
-    /**
-     * ✅ Page principale de gestion des ateliers
-     */
     @GetMapping
     public String gererAteliers(Model model) {
         List<Atelier> ateliers = atelierRepository.findAll();
         List<Creneau> tousLesCreneaux = creneauRepository.findAll();
 
-        // Statistiques
         long totalCreneaux = tousLesCreneaux.size();
         long creneauxComplets = tousLesCreneaux.stream()
                 .filter(Creneau::isComplet)
@@ -46,12 +42,9 @@ public class AdminAtelierController {
         model.addAttribute("creneauxComplets", creneauxComplets);
         model.addAttribute("creneauxDisponibles", creneauxDisponibles);
 
-        return "admin_ateliers";
+        return "Admin_ateliers";
     }
 
-    /**
-     * ✅ Ajouter un nouveau créneau
-     */
     @PostMapping("/creneaux/ajouter")
     public String ajouterCreneau(@RequestParam Long atelierId,
                                  @RequestParam int horaireDebut,
@@ -79,9 +72,6 @@ public class AdminAtelierController {
         return "redirect:/admin/ateliers";
     }
 
-    /**
-     * ✅ Modifier un créneau existant
-     */
     @PostMapping("/creneaux/modifier")
     public String modifierCreneau(@RequestParam Long creneauId,
                                   @RequestParam int horaireDebut,
@@ -93,7 +83,6 @@ public class AdminAtelierController {
             Creneau creneau = creneauRepository.findById(creneauId)
                     .orElseThrow(() -> new IllegalArgumentException("Créneau introuvable"));
 
-            // Vérifier que la nouvelle capacité n'est pas inférieure au nombre d'inscriptions
             int nbInscriptions = creneau.getInscriptions().size();
             if (capacite < nbInscriptions) {
                 redirectAttributes.addFlashAttribute("error",
@@ -106,8 +95,6 @@ public class AdminAtelierController {
             creneau.setDuree(duree);
             creneau.setLieu(lieu);
             creneau.setCapacite(capacite);
-
-            // Mettre à jour le statut complet
             creneau.setStatut(creneau.isComplet());
 
             creneauRepository.save(creneau);
@@ -122,9 +109,6 @@ public class AdminAtelierController {
         return "redirect:/admin/ateliers";
     }
 
-    /**
-     * ✅ Supprimer un créneau
-     */
     @PostMapping("/creneaux/supprimer/{id}")
     public String supprimerCreneau(@PathVariable Long id,
                                    RedirectAttributes redirectAttributes) {
@@ -132,7 +116,6 @@ public class AdminAtelierController {
             Creneau creneau = creneauRepository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("Créneau introuvable"));
 
-            // Vérifier s'il y a des inscriptions
             if (!creneau.getInscriptions().isEmpty()) {
                 redirectAttributes.addFlashAttribute("error",
                         "Impossible de supprimer un créneau avec des inscriptions actives. " +
@@ -151,9 +134,6 @@ public class AdminAtelierController {
         return "redirect:/admin/ateliers";
     }
 
-    /**
-     * ✅ Créer un nouvel atelier (optionnel)
-     */
     @PostMapping("/ajouter")
     public String ajouterAtelier(@RequestParam String titre,
                                  RedirectAttributes redirectAttributes) {
