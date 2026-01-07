@@ -1,36 +1,63 @@
 package com.example.fetescience.controller;
 
-import com.example.fetescience.model.Participant;
-import com.example.fetescience.service.ParticipantService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.fetescience.model.*;
+import com.example.fetescience.repository.*;
+import com.example.fetescience.service.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-@RestController
+@Controller
+@RequestMapping("/participant")
+@PreAuthorize("hasAnyRole('PARTICIPANT', 'ADMIN')")
 public class ParticipantController {
 
-    private final ParticipantService participantService;
+    private final InscriptionService inscriptionService;
+    private final PersonneRepository personneRepository;
 
-    // Injection du SERVICE (pas du repository)
-    public ParticipantController(ParticipantService participantService) {
-        this.participantService = participantService;
+    public ParticipantController(InscriptionService inscriptionService,
+                                 PersonneRepository personneRepository) {
+        this.inscriptionService = inscriptionService;
+        this.personneRepository = personneRepository;
     }
 
-    // GET http://localhost:8081/participants
-    @GetMapping("/participants")
-    public List<Participant> getAllParticipants() {
-        return participantService.listAll();
+    /**
+     * ✅ Page "Mes inscriptions" (utilise inscription.html)
+     */
+    @GetMapping("/inscriptions")
+    public String mesInscriptions(Authentication authentication, Model model) {
+        String email = authentication.getName();
+        Personne personne = personneRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé"));
+
+        List<Inscription> inscriptions = inscriptionService.getInscriptionsByEmail(email);
+
+        model.addAttribute("participant", personne);
+        model.addAttribute("inscriptions", inscriptions);
+
+        // ✅ CHANGÉ : Utilise "inscription" au lieu de "mes_inscriptions"
+        return "inscription";
     }
 
-    // GET http://localhost:8081/participants/{id}
-    @GetMapping("/participants/{id}")
-    public ResponseEntity<Participant> getParticipantById(@PathVariable Long id) {
-        // Utilise la méthode findById (Optional) du service
-        return participantService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    /**
+     * ✅ Se désinscrire d'un atelier
+     */
+    @PostMapping("/inscriptions/desinscrire/{id}")
+    public String desinscrire(@PathVariable Long id,
+                              Authentication authentication,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            inscriptionService.desinscrire(id);
+            redirectAttributes.addFlashAttribute("success", "Désinscription effectuée !");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/participant/inscriptions";
     }
 }

@@ -29,22 +29,25 @@ public class Atelier {
         this.titre = titre;
     }
 
+    public void setAnimateur(Animateur animateur) {
+        this.animateur = animateur;
+    }
+
     public void ajouterCreneau(Creneau c) {
         creneaux.add(c);
         c.setAtelier(this);
     }
 
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;  // même object
+        if (this == o) return true;
         if (!(o instanceof Atelier)) return false;
         Atelier atelier = (Atelier) o;
         return this.id != null && this.id.equals(atelier.id);
     }
 
-    /*@Override
+    @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
-    }*/
+    }
 }

@@ -3,16 +3,15 @@ package com.example.fetescience.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter @Setter
-public class Animateur extends Personne{
-
+public class Animateur extends Personne {
 
     @OneToMany(mappedBy = "animateur", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Atelier> listeAtelier = new ArrayList<>();
+    private Set<Atelier> ateliers = new HashSet<>();
 
     public Animateur() {
         super();
@@ -23,24 +22,13 @@ public class Animateur extends Personne{
         super(nom, email, password, Role.ANIMATEUR);
     }
 
-    public void ajouterAtelier(Atelier a) {
-        listeAtelier.add(a);
-        a.setAnimateur(this);
+    public void ajouterAtelier(Atelier atelier) {
+        ateliers.add(atelier);
+        atelier.setAnimateur(this);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;  // même object
-        if (!(o instanceof Animateur)) return false;
-        Animateur animateur = (Animateur) o;
-        return this.getId() != null && this.getId().equals(animateur.getId());
+    public void retirerAtelier(Atelier atelier) {
+        ateliers.remove(atelier);
+        atelier.setAnimateur(null);
     }
-
-    /*@Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }*/
-
-
-
 }

@@ -99,3 +99,52 @@
 </body>
 </html>
 
+
+<!--   if(!atelierId) {
+            creneauGroup.style.display = 'none';
+            return;
+        }
+
+        creneauGroup.style.display = 'block';
+
+        try {
+            const response = await fetch(`/api/ateliers/${atelierId}/creneaux`);
+            const creneaux = await response.json();
+
+            if (creneaux.length === 0) {
+                creneauSelect.innerHTML = '<option value="">Aucun créneau disponible</option>';
+                return;
+            }
+
+            creneauSelect.innerHTML = '<option value="">-- Choisissez un horaire --</option>';
+
+            creneaux.forEach(c => {
+                const opt = document.createElement("option");
+                opt.value = c.id;
+
+                if(c.complet) {
+                    opt.text = `${c.horaireDebut}h - ${c.lieu} - COMPLET`;
+                    opt.disabled = true;
+                } else {
+                    opt.text = `${c.horaireDebut}h - ${c.lieu} (${c.duree} min) - ${c.placesRestantes} places`;
+                }
+
+                creneauSelect.add(opt);
+            });
+
+            creneauSelect.onchange = () => {
+                btnSubmit.disabled = (creneauSelect.value === "");
+            };
+        } catch (error) {
+            console.error("Erreur:", error);
+            creneauSelect.innerHTML = '<option>Erreur de chargement</option>';
+        }
+    }
+</script>
+
+<style>
+    .readonly-input { background-color: #e9ecef; cursor: not-allowed; }
+</style>
+
+</body>
+</html>-->

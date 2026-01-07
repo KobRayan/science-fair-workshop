@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-
     <title>Créer un compte - Fête de la Science</title>
 </head>
 <body>
@@ -15,34 +14,50 @@
     </header>
 
     <main>
-        <!-- Alerts -->
-        <div th:if="${erreur}" class="alert" style="color: #721c24; background: #f8d7da; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
-            <span th:text="${erreur}"></span>
+        <!-- Messages d'erreur/succès -->
+        <div th:if="${error}" class="alert" style="color: #721c24; background: #f8d7da; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+            ❌ <span th:text="${error}"></span>
+        </div>
+        <div th:if="${success}" class="alert" style="color: #155724; background: #d4edda; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+            ✅ <span th:text="${success}"></span>
         </div>
 
-        <form method="POST" action="/auth/register">
+        <!-- ✅ FORMULAIRE CORRIGÉ -->
+        <form method="POST" th:action="@{/register}">
             <div class="form-group">
                 <label for="role">Je suis :</label>
                 <select id="role" name="role" required>
                     <option value="PARTICIPANT">Un Participant (Visiteur)</option>
-                    <option value="ANIMATEUR">Un Animateur (Organisateur)</option>
+                    <option value="ANIMATEUR">Un Animateur</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="nom">Nom complet :</label>
-                <input type="text" id="nom" name="nom" required placeholder="ex: Alice Dupont" minlength="2">
+                <input type="text"
+                       id="nom"
+                       name="nom"
+                       required
+                       placeholder="ex: Alice Dupont">
             </div>
 
             <div class="form-group">
                 <label for="email">Email :</label>
-                <!-- HTML5 Validation -->
-                <input type="email" id="email" name="email" required placeholder="ex: alice@test.com">
+                <input type="email"
+                       id="email"
+                       name="email"
+                       required
+                       placeholder="ex: alice@test.com">
             </div>
 
             <div class="form-group">
                 <label for="password">Mot de passe :</label>
-                <input type="password" id="password" name="password" required minlength="4">
+                <input type="password"
+                       id="password"
+                       name="password"
+                       required
+                       minlength="6"
+                       placeholder="Minimum 6 caractères">
             </div>
 
             <div class="form-actions">
@@ -50,8 +65,13 @@
             </div>
         </form>
 
-        <div style="text-align: center; margin-top: 20px;">
-            <p>Déjà inscrit ? <a href="/auth/login" style="color: var(--primary-color);">Se connecter</a></p>
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+        <div style="text-align: center;">
+            <p>Déjà inscrit ? <a th:href="@{/login}" style="color: var(--primary-color); font-weight: bold;">Se connecter</a></p>
+        </div>
+        <div style="text-align: center; margin-top: 15px;">
+            <a th:href="@{/}" style="color: #6c757d; text-decoration: none; font-size: 0.9em;">← Retour à l'accueil</a>
         </div>
     </main>
 </div>
