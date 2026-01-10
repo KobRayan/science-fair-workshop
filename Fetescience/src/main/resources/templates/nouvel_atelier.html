@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Créer un Atelier</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/inscription.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: user-bar}"></div>
+
+<div class="container">
+    <h2>Créer un nouvel Atelier</h2>
+
+    <form th:action="@{/animateur/ateliers}" th:object="${atelier}" method="post">
+
+        <div class="form-group">
+            <label for="titre">Titre de l'atelier :</label>
+            <input type="text" id="titre" th:field="*{titre}" placeholder="Ex: Robotique pour tous" required>
+        </div>
+        <div class="form-actions">
+
+            <button type="submit" class="btn btn-primary">Créer et ajouter des créneaux</button>
+
+            <a th:href="@{/animateur_page}" class="btn btn-secondary">Annuler</a>
+
+        </div>
+    </form>
+
+    <br>
+
+</div>
+
+<div th:replace="~{fragments/footer :: site-footer}"></div>
+
+</body>
+</html>

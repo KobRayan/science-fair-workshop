@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gérer l'atelier</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/inscription.css}">
+
+    <style>
+        /* DASHBOARD GRID LAYOUT */
+        .management-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* List takes 2/3, Form takes 1/3 */
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        /* CARD STYLING */
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+
+        /* HEADER FIX */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* Aligns top so button doesn't stretch */
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .header-text h2 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.8em;
+        }
+
+        .header-text h3 {
+            margin: 5px 0 0 0;
+            color: var(--secondary-color);
+            font-weight: normal;
+            font-size: 1.2em;
+        }
+
+        /* BUTTON FIX: Override the global 'flex: 1' from style.css */
+        .btn-header {
+            flex: none !important; /* Prevents button from becoming huge */
+            width: auto !important;
+            padding: 10px 20px;
+            font-size: 0.9em;
+        }
+
+        /* FORM IMPROVEMENTS */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+
+        /* BADGE FOR TIME */
+        .time-badge {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .management-grid { grid-template-columns: 1fr; }
+            .dashboard-header { flex-direction: column; gap: 15px; }
+            .btn-header { width: 100% !important; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: user-bar}"></div>
+
+<div class="container" style="max-width: 1100px;">
+
+    <div class="dashboard-header">
+        <div class="header-text">
+            <h2>Gestion de l'atelier</h2>
+            <h3 th:text="${atelier.titre}">Titre de l'Atelier</h3>
+        </div>
+        <a th:href="@{/animateur_page}" class="btn btn-secondary btn-header">
+            ← Retour au tableau de bord
+        </a>
+    </div>
+
+    <div class="management-grid">
+
+        <div class="card">
+            <h3 style="color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">
+                📅 Créneaux planifiés
+            </h3>
+
+            <div th:if="${#lists.isEmpty(atelier.creneaux)}" class="aucune-inscription">
+                <p style="text-align: center; color: #888;">Aucun créneau n'a encore été ajouté.</p>
+            </div>
+
+            <table th:unless="${#lists.isEmpty(atelier.creneaux)}" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                <tr style="text-align: left; background: #f8f9fa; color: #666;">
+                    <th style="padding: 12px;">Horaire</th>
+                    <th style="padding: 12px;">Durée</th>
+                    <th style="padding: 12px;">Lieu</th>
+                    <th style="padding: 12px;">Places</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${atelier.creneaux}" style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px;">
+                        <span class="time-badge" th:text="${c.horaireDebut} + 'h00'">14h00</span>
+                    </td>
+                    <td style="padding: 12px;" th:text="${c.duree} + ' min'">60 min</td>
+                    <td style="padding: 12px;" th:text="${c.lieu}">Salle B</td>
+                    <td style="padding: 12px;">
+                        <strong th:text="${c.inscriptions.size()}">0</strong> / <span th:text="${c.capacite}">20</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card" style="background-color: #fcfcfc;">
+            <h3 style="color: var(--primary-color); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">
+                ➕ Ajouter un créneau
+            </h3>
+
+            <form th:action="@{/animateur/ateliers/{AtelierId}/creneaux(AtelierId=${atelier.id})}"
+                  th:object="${nouveauCreneau}" method="post">
+
+                <div class="form-group">
+                    <label>Heure de début (H) :</label>
+                    <input type="number" th:field="*{horaireDebut}"
+                           min="8" max="20" placeholder="ex: 14" required class="form-control">
+                    <small style="color: #888; font-size: 0.8em;">Format 24h (ex: 9, 14, 16)</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Durée (minutes) :</label>
+                    <input type="number" th:field="*{duree}"
+                           step="15" min="15" value="60" required class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Capacité :</label>
+                    <input type="number" th:field="*{capacite}"
+                           min="1" value="20" required class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Lieu :</label>
+                    <input type="text" th:field="*{lieu}"
+                           placeholder="Ex: Salle 12, Bat. B" required class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; flex: none;">
+                    Ajouter ce créneau
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: site-footer}"></div>
+
+</body>
+</html>
