@@ -151,7 +151,7 @@
                 ➕ Ajouter un créneau
             </h3>
 
-            <form th:action="@{/animateur/ateliers/{id}/creneaux(id=${atelier.id})}"
+            <form th:action="@{/animateur/ateliers/{AtelierId}/creneaux(AtelierId=${atelier.id})}"
                   th:object="${nouveauCreneau}" method="post">
 
                 <div class="form-group">

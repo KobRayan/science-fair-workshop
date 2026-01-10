@@ -79,13 +79,13 @@ public class AtelierController {
     }
 
     // 4. Add a Creneau (POST)
-    @PostMapping("/{id}/creneaux")
-    public String ajouterCreneau(@PathVariable Long id, @ModelAttribute Creneau creneau, HttpSession session) {
+    @PostMapping("/{atelierId}/creneaux")
+    public String ajouterCreneau(@PathVariable Long atelierId, @ModelAttribute Creneau creneau, HttpSession session) {
         if (!isAnimateur(session)) {
             return "redirect:/login";
         }
 
-        Atelier atelier = atelierService.getById(id);
+        Atelier atelier = atelierService.getById(atelierId);
 
         // Use the helper method in your Atelier entity to link them
         atelier.ajouterCreneau(creneau);
@@ -94,7 +94,7 @@ public class AtelierController {
         // because of cascade = CascadeType.ALL in your model
         atelierService.create(atelier);
 
-        return "redirect:/animateur/ateliers/" + id + "/gestion";
+        return "redirect:/animateur/ateliers/" + atelierId + "/gestion";
     }
 
 
