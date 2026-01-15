@@ -6,28 +6,76 @@
     <link type="text/css" rel="stylesheet" th:href="@{/css/inscription.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <title>Vos inscriptions</title>
+
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
 </head>
 <body>
 <div th:replace="~{fragments/navbar :: user-bar}"></div>
 
 <h1 id="inscription-planning">Vos inscriptions aux ateliers</h1>
 
+<!-- ✅ Messages de succès/erreur -->
+<div th:if="${success}" class="alert alert-success" style="color: #155724; background: #d4edda; padding: 10px; margin: 15px; border-radius: 5px;">
+    ✅ <span th:text="${success}"></span>
+</div>
+
+<div th:if="${error}" class="alert alert-danger" style="color: #721c24; background: #f8d7da; padding: 10px; margin: 15px; border-radius: 5px;">
+    ❌ <span th:text="${error}"></span>
+</div>
+
+
 <div id="inscription-list">
-    <!-- Inscription 1 : Date éloignée (plus de 2 jours) - Bouton visible -->
+    <!-- ✅ Message when user has no inscriptions -->
+    <div th:if="${inscriptions.isEmpty()}"
+         style="text-align: center; padding: 40px; color: #666;">
+        <p style="font-size: 1.2em;">
+            Vous n'avez aucune inscription pour le moment.
+            Veuillez vous inscrire.
+        </p>
+    </div>
+
+
     <div th:each="inscription : ${inscriptions}"
          class="inscription"
-         th:attr="id-inscription=${inscription.id}">
+         th:id="'inscription-row-' + ${inscription.id}">
         <table>
             <tr><td>Titre</td><td th:text="${inscription.creneau.atelier.titre}">Titre</td></tr>
             <tr><td>Créneau</td><td th:text="${inscription.creneau.horaireDebut} + 'h'">Horaire</td></tr>
             <tr><td>Lieu</td><td th:text="${inscription.creneau.lieu}">Lieu</td></tr>
             <tr><td>Durée</td><td th:text="${inscription.creneau.duree} + ' min'">Durée</td></tr>
-            <tr><td>Statut</td><td th:text="${inscription.statut}">Statut</td></tr>
-        </table>
-        <button class="btn-desinscription">Se désinscrire</button>
+            <tr><td>Statut</td>
+                <td>
+                    <span th:if="${inscription.statut.name() == 'EN_ATTENTE'}" style="color: orange;">⏳ En attente</span>
+                    <span th:if="${inscription.statut.name() == 'VALIDEE'}" style="color: green;">✅ Validée</span>
+                    <span th:if="${inscription.statut.name() == 'REFUSEE'}" style="color: red;">❌ Refusée</span>
+                </td>
+            </tr>
+    </table>
+
+        <div style="margin-top: 10px;">
+            <button th:if="${inscription.statut.name() == 'EN_ATTENTE' or inscription.statut.name() == 'VALIDEE'}"
+                    type="button"
+                    class="btn btn-desinscription"
+                    th:onclick="'deleteInscription(' + ${inscription.id} + ')'">
+                Se désinscrire
+            </button>
+
+            <span th:if="${inscription.statut.name() == 'REFUSEE'}"
+                  style="color: #999; font-style: italic;">
+                (Désinscription non disponible)
+            </span>
+        </div>
+        <hr>
     </div>
 </div>
 
-<script th:src="@{/js/inscriptions.js}"></script>
+<!-- ✅ Lien pour nouvelle inscription -->
+<div style="text-align: center; margin: 30px;">
+    <a th:href="@{/nouvelle-inscription}" class="btn btn-primary">Nouvelle inscription</a>
+</div>
+
+<script th:src="@{/js/deleteInscription.js}"></script>
 </body>
 </html>

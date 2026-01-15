@@ -45,6 +45,25 @@ body {
 
 /* === Barre de navigation === */
 
+.site-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-decoration: none;
+    white-space: nowrap;
+
+    /* Pop animation */
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.site-title:hover {
+    color: #003d7a;
+    transform: scale(1.08);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
 .user-bar {
     background-color: white;
     border-bottom: 1px solid #ddd;
@@ -209,6 +228,9 @@ header h1 {
 }
 
 .btn-navbar {
+    background: none;
+    border: none;
+    font: inherit;
     padding: 5px 12px;
     border-radius: 4px;
     text-decoration: none;

@@ -4,7 +4,6 @@ import com.example.fetescience.model.Animateur;
 import com.example.fetescience.model.Personne;
 import com.example.fetescience.model.Role;
 import com.example.fetescience.service.AnimateurService;
-import com.example.fetescience.service.AtelierService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +22,7 @@ public class HomeController {
         return "Home";
     }
 
-    // ✅ SECURED: Animateur Page
+    // ✅SECURED: Animateur Page
     @GetMapping("/animateur_page")
     public String animateurPage(Model model, HttpSession session) {
         Personne user = (Personne) session.getAttribute("user");
@@ -40,7 +39,7 @@ public class HomeController {
 
         // Update the model with the fresh data
         model.addAttribute("animateur", freshAnimateur);
-        model.addAttribute("ateliers", freshAnimateur.getListeAtelier());
+        model.addAttribute("ateliers", freshAnimateur.getAteliers());
 
         return "animateur_page";
     }

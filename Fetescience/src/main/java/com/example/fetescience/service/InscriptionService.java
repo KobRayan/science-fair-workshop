@@ -5,161 +5,193 @@ import com.example.fetescience.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-@Transactional
 public class InscriptionService {
 
-    private final InscriptionRepository inscriptionRepo;
-    private final ParticipantRepository participantRepo;
-    private final AtelierRepository atelierRepo;
-    private final CreneauRepository creneauRepo;
+    private final InscriptionRepository inscriptionRepository;
+    private final PersonneRepository personneRepository;
+    private final AtelierRepository atelierRepository;
+    private final CreneauRepository creneauRepository;
 
-    public InscriptionService(InscriptionRepository inscriptionRepo,
-                            ParticipantRepository participantRepo,
-                            AtelierRepository atelierRepo,
-                            CreneauRepository creneauRepo) {
-        this.inscriptionRepo = inscriptionRepo;
-        this.participantRepo = participantRepo;
-        this.atelierRepo = atelierRepo;
-        this.creneauRepo = creneauRepo;
+    public InscriptionService(InscriptionRepository inscriptionRepository,
+                              PersonneRepository personneRepository,
+                              AtelierRepository atelierRepository,
+                              CreneauRepository creneauRepository) {
+        this.inscriptionRepository = inscriptionRepository;
+        this.personneRepository = personneRepository;
+        this.atelierRepository = atelierRepository;
+        this.creneauRepository = creneauRepository;
     }
 
-    public Inscription create(Inscription inscription) {
-        return inscriptionRepo.save(inscription);
-    }
-
-    public List<Inscription> findAll() {
-        return inscriptionRepo.findAll();
-    }
-
-    public Optional<Inscription> findById(Long id) {
-        return inscriptionRepo.findById(id);
-    }
-
-    public Inscription update(Inscription inscription) {
-        return inscriptionRepo.save(inscription);
-    }
-
-    public List<Inscription> findByParticipantId(Long participantId) {
-        return inscriptionRepo.findByParticipantId(participantId);
-    }
+    // ========== MÉTHODES POUR L'ADMIN ==========
 
     /**
-     * Créer une inscription à partir d'un titre d'atelier
+     * Récupère toutes les inscriptions (pour l'admin)
      */
-    public Inscription creerInscription(Long participantId, String titreAtelier) {
-
-        Participant participant = participantRepo.findById(participantId)
-                .orElseThrow(() -> new IllegalArgumentException("Participant introuvable"));
-
-        Atelier atelier = atelierRepo.findByTitre(titreAtelier)
-                .orElseThrow(() -> new IllegalArgumentException("Atelier '" + titreAtelier + "' introuvable"));
-
-        // Sorted by date
-        List<Creneau> creneaux =
-                creneauRepo.findByAtelierIdOrderByHoraireDebutAsc(atelier.getId());
-
-        if (creneaux.isEmpty()) {
-            throw new IllegalArgumentException("Aucun créneau disponible pour cet atelier");
-        }
-
-        // Find earliest non-full creneau
-        Creneau creneauDisponible = null;
-
-        for (Creneau c : creneaux) {
-            if (!c.isComplet()) {
-                creneauDisponible = c;
-                break;
-            }
-        }
-
-        if (creneauDisponible == null) {
-            throw new IllegalArgumentException("Tous les créneaux sont complets pour cet atelier");
-        }
-
-        // Shared checks
-        verifierInscriptionPossible(participantId, creneauDisponible);
-
-        // Create inscription
-        Inscription inscription = new Inscription(participant, creneauDisponible);
-
-        return inscriptionRepo.save(inscription);
+    public List<Inscription> getAllInscriptions() {
+        return inscriptionRepository.findAll();
     }
 
     /**
-    * Inscrit le participant depuis un creneau disponbile (l'utilisateur selectionne son créneau)
-    */
+     * Accepter une inscription (admin)
+     */
+    @Transactional
+    public void accepterInscription(Long inscriptionId) {
+        Inscription inscription = inscriptionRepository.findById(inscriptionId)
+                .orElseThrow(() -> new IllegalArgumentException("Inscription non trouvée"));
 
-public Inscription creerInscription(Long participantId, Long creneauId) {
-
-    Participant participant = participantRepo.findById(participantId)
-            .orElseThrow(() -> new IllegalArgumentException("Participant introuvable"));
-
-    Creneau creneau = creneauRepo.findById(creneauId)
-            .orElseThrow(() -> new IllegalArgumentException("Creneau introuvable"));
-
-    // Reuse shared validations
-    verifierInscriptionPossible(participantId, creneau);
-
-    // Create inscription
-    Inscription inscription = new Inscription(participant, creneau);
-
-    return inscriptionRepo.save(inscription);
-}
-
+        inscription.setStatut(StatutInscription.VALIDEE);
+        inscriptionRepository.save(inscription);
+    }
 
     /**
-     * Récupérer les inscriptions d'un participant
+     * Refuser une inscription (admin)
+     */
+    @Transactional
+    public void refuserInscription(Long inscriptionId) {
+        Inscription inscription = inscriptionRepository.findById(inscriptionId)
+                .orElseThrow(() -> new IllegalArgumentException("Inscription non trouvée"));
+
+        inscription.setStatut(StatutInscription.REFUSEE);
+        inscriptionRepository.save(inscription);
+    }
+
+    // ========== MÉTHODES POUR LES PARTICIPANTS ==========
+
+    /**
+     * Récupère les inscriptions d'un participant par son email
+     */
+    public List<Inscription> getInscriptionsByEmail(String email) {
+        Personne personne = personneRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé"));
+
+        return inscriptionRepository.findByParticipant((Participant) personne);
+    }
+
+    /**
+     * ✅ Récupère les inscriptions par ID participant (pour ancien contrôleur)
      */
     public List<Inscription> getInscriptionsByParticipant(Long participantId) {
-        return inscriptionRepo.findByParticipantId(participantId);
+        Personne personne = personneRepository.findById(participantId)
+                .orElseThrow(() -> new IllegalArgumentException("Participant non trouvé"));
+
+        return inscriptionRepository.findByParticipant((Participant) personne);
     }
 
     /**
-     * Supprimer une inscription
+     * Inscrire un participant à un créneau (via email - pour Spring Security)
      */
-    public boolean supprimerInscription(Long inscriptionId, Long participantId) {
-        Optional<Inscription> inscriptionOpt = inscriptionRepo.findById(inscriptionId);
-        
-        if (inscriptionOpt.isEmpty()) {
-            return false;
+    @Transactional
+    public void inscrireParticipant(String email, Long creneauId) {
+        Personne personne = personneRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé"));
+
+        if (!(personne instanceof Participant)) {
+            throw new IllegalArgumentException("Seuls les participants peuvent s'inscrire");
+        }
+        Participant participant = (Participant) personne;
+
+        Creneau creneau = creneauRepository.findById(creneauId)
+                .orElseThrow(() -> new IllegalArgumentException("Créneau non trouvé"));
+
+        // Vérifier si déjà inscrit à ce créneau
+        if (inscriptionRepository.existsByParticipantAndCreneau(participant, creneau)) {
+            throw new IllegalArgumentException("Vous êtes déjà inscrit à ce créneau");
         }
 
-        Inscription inscription = inscriptionOpt.get();
-        
-        // Vérifier que l'inscription appartient bien au participant
+        Inscription inscription = new Inscription();
+        inscription.setParticipant(participant);
+        inscription.setCreneau(creneau);
+        inscription.setStatut(StatutInscription.EN_ATTENTE);
+        inscription.setDateInscription(LocalDateTime.now());
+
+        inscriptionRepository.save(inscription);
+    }
+
+    /**
+     * ✅ Créer une inscription (ancien contrôleur - par ID)
+     */
+    @Transactional
+    public Inscription creerInscription(Long participantId, Long creneauId) {
+        Personne personne = personneRepository.findById(participantId)
+                .orElseThrow(() -> new IllegalArgumentException("Participant non trouvé"));
+
+        if (!(personne instanceof Participant)) {
+            throw new IllegalArgumentException("Seuls les participants peuvent s'inscrire");
+        }
+        Participant participant = (Participant) personne;
+
+        Creneau creneau = creneauRepository.findById(creneauId)
+                .orElseThrow(() -> new IllegalArgumentException("Créneau non trouvé"));
+
+        if (inscriptionRepository.existsByParticipantIdAndCreneauId(participantId, creneauId)) {
+            throw new IllegalArgumentException("Déjà inscrit à ce créneau");
+        }
+
+        Inscription inscription = new Inscription(participant, creneau);
+        return  inscriptionRepository.save(inscription);
+    }
+
+    /**
+     * Se désinscrire d'un atelier (via ID inscription)
+     */
+    @Transactional
+    public void desinscrire(Long inscriptionId) {
+        Inscription inscription = inscriptionRepository.findById(inscriptionId)
+                .orElseThrow(() -> new IllegalArgumentException("Inscription non trouvée"));
+
+        if (inscription.getStatut() != StatutInscription.EN_ATTENTE) {
+            throw new IllegalArgumentException("Vous ne pouvez vous désinscrire que des inscriptions en attente");
+        }
+
+        inscriptionRepository.delete(inscription);
+    }
+
+    /**
+     * ✅ Supprimer une inscription (ancien contrôleur - avec vérification participant)
+     */
+    @Transactional
+    public void supprimerInscription(Long participantId, Long inscriptionId) {
+        Inscription inscription = inscriptionRepository.findById(inscriptionId)
+                .orElseThrow(() -> new IllegalArgumentException("Inscription non trouvée"));
+
         if (!inscription.getParticipant().getId().equals(participantId)) {
-            throw new IllegalArgumentException("Cette inscription ne vous appartient pas");
+            throw new IllegalArgumentException("Vous ne pouvez supprimer que vos propres inscriptions");
         }
 
-        // Vérifier si l'inscription peut être annulée
-        if (!inscription.peutEtreAnnulee()) {
-            throw new IllegalArgumentException("Cette inscription ne peut plus être annulée");
-        }
-
-        inscriptionRepo.delete(inscription);
-        return true;
+        inscriptionRepository.delete(inscription);
     }
 
+    // ========== STATISTIQUES ==========
 
-    ///  private helper
-    private void verifierInscriptionPossible(Long participantId, Creneau creneau) {
+    /**
+     * Obtenir les statistiques (pour l'admin dashboard)
+     */
+    public InscriptionStats getStats() {
+        long total = inscriptionRepository.count();
+        long enAttente = inscriptionRepository.countByStatut(StatutInscription.EN_ATTENTE);
+        long validees = inscriptionRepository.countByStatut(StatutInscription.VALIDEE);
 
-        // Participant already exists (should be checked before calling)
-        if (creneau.isComplet()) {
-            throw new IllegalArgumentException("Ce créneau est complet");
-        }
-
-        // Check duplicate: participant already in THIS creneau
-        boolean dejaInscrit = inscriptionRepo
-                .existsByParticipantIdAndCreneauId(participantId, creneau.getId());
-
-        if (dejaInscrit) {
-            throw new IllegalArgumentException("Participant déjà inscrit à ce créneau");
-        }
+        return new InscriptionStats(total, enAttente, validees);
     }
 
+    // Classe interne pour les statistiques
+    public static class InscriptionStats {
+        private long total;
+        private long enAttente;
+        private long validees;
+
+        public InscriptionStats(long total, long enAttente, long validees) {
+            this.total = total;
+            this.enAttente = enAttente;
+            this.validees = validees;
+        }
+
+        public long getTotal() { return total; }
+        public long getEnAttente() { return enAttente; }
+        public long getValidees() { return validees; }
+    }
 }

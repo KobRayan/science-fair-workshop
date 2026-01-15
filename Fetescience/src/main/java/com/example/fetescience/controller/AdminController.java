@@ -1,16 +1,18 @@
 package com.example.fetescience.controller;
 
 import com.example.fetescience.model.Inscription;
-import com.example.fetescience.model.StatutInscription;
 import com.example.fetescience.service.InscriptionService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
     private final InscriptionService inscriptionService;
@@ -19,31 +21,33 @@ public class AdminController {
         this.inscriptionService = inscriptionService;
     }
 
-    // Page principale admin : liste de toutes les inscriptions
     @GetMapping("/inscriptions")
-    public String toutesLesInscriptions(Model model) {
-        List<Inscription> inscriptions = inscriptionService.findAll();
+    public String gererInscriptions(Model model) {
+        List<Inscription> inscriptions = inscriptionService.getAllInscriptions();
         model.addAttribute("inscriptions", inscriptions);
         return "admin_inscriptions";
     }
 
-    // Accepter une inscription
-    @PostMapping("/inscriptions/{id}/accepter")
-    public String accepterInscription(@PathVariable Long id) {
-        Inscription inscription = inscriptionService.findById(id)
-                .orElseThrow(() -> new RuntimeException("Inscription non trouvée"));
-        inscription.setStatut(StatutInscription.VALIDEE);
-        inscriptionService.update(inscription);
+    @PostMapping("/inscriptions/valider/{id}")
+    public String validerInscription(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            // Uses the service method we created
+            inscriptionService.accepterInscription(id);
+            redirectAttributes.addFlashAttribute("success", "Inscription validée !");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erreur : " + e.getMessage());
+        }
         return "redirect:/admin/inscriptions";
     }
 
-    // Refuser une inscription
-    @PostMapping("/inscriptions/{id}/refuser")
-    public String refuserInscription(@PathVariable Long id) {
-        Inscription inscription = inscriptionService.findById(id)
-                .orElseThrow(() -> new RuntimeException("Inscription non trouvée"));
-        inscription.setStatut(StatutInscription.REFUSEE);
-        inscriptionService.update(inscription);
+    @PostMapping("/inscriptions/refuser/{id}")
+    public String refuserInscription(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            inscriptionService.refuserInscription(id);
+            redirectAttributes.addFlashAttribute("success", "Inscription refusée !");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erreur : " + e.getMessage());
+        }
         return "redirect:/admin/inscriptions";
     }
 }

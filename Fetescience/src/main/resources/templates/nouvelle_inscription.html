@@ -20,11 +20,11 @@
             <span th:text="${erreur}"></span>
         </div>
 
-        <form id="form-inscription" method="POST" action="/inscrire_atelier">
+        <form id="form-inscription" method="POST" th:action="@{/inscrire_atelier}">
 
             <div class="form-group">
                 <label for="nom">Votre Nom :</label>
-                <!-- ✅ PRE-FILLED & READONLY IF LOGGED IN -->
+                <!-- PRE-FILLED & READONLY IF LOGGED IN -->
                 <input
                         type="text"
                         id="nom"
@@ -62,37 +62,9 @@
     </main>
 </div>
 
-<!-- Keep your Javascript exactly as it was -->
-<script>
-    // ... paste your existing JS for chargerCreneaux here ...
-    // OR create separate JS file
-    async function chargerCreneaux() {
-        // ... (same logic as before) ...
-        const atelierId = document.getElementById("atelierSelect").value;
-        const creneauSelect = document.getElementById("creneauId");
-        const creneauGroup = document.getElementById("creneau-group");
-        const btnSubmit = document.getElementById("btn-submit");
 
-        creneauSelect.innerHTML = '';
-        btnSubmit.disabled = true;
+<script th:src="@{/js/charger_creneaux.js}"></script>
 
-        if(!atelierId) { creneauGroup.style.display = 'none'; return; }
-        creneauGroup.style.display = 'block';
-
-        const response = await fetch(`/api/ateliers/${atelierId}/creneaux`);
-        const creneaux = await response.json();
-
-        creneaux.forEach(c => {
-            const opt = document.createElement("option");
-            opt.value = c.id;
-            opt.text = c.horaireDebut + "h (" + (c.statut ? "COMPLET" : "Libre") + ")";
-            if(c.statut) opt.disabled = true;
-            creneauSelect.add(opt);
-        });
-
-        creneauSelect.onchange = () => btnSubmit.disabled = false;
-    }
-</script>
 <style>
     .readonly-input { background-color: #e9ecef; cursor: not-allowed; }
 </style>
