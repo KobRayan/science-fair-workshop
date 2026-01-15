@@ -6,6 +6,10 @@
     <link type="text/css" rel="stylesheet" th:href="@{/css/inscription.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <title>Vos inscriptions</title>
+
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
 </head>
 <body>
 <div th:replace="~{fragments/navbar :: user-bar}"></div>
@@ -21,16 +25,21 @@
     ❌ <span th:text="${error}"></span>
 </div>
 
-<!-- ✅ Message si aucune inscription -->
-<div th:if="${inscriptions.isEmpty()}" style="text-align: center; padding: 40px; color: #666;">
-    <p style="font-size: 1.2em;">📭 Vous n'avez aucune inscription pour le moment.</p>
-    <a th:href="@{/inscriptions/nouvelle}" class="btn btn-primary">S'inscrire à un atelier</a>
-</div>
 
 <div id="inscription-list">
+    <!-- ✅ Message when user has no inscriptions -->
+    <div th:if="${inscriptions.isEmpty()}"
+         style="text-align: center; padding: 40px; color: #666;">
+        <p style="font-size: 1.2em;">
+            Vous n'avez aucune inscription pour le moment.
+            Veuillez vous inscrire.
+        </p>
+    </div>
+
+
     <div th:each="inscription : ${inscriptions}"
          class="inscription"
-         th:attr="id-inscription=${inscription.id}">
+         th:id="'inscription-row-' + ${inscription.id}">
         <table>
             <tr><td>Titre</td><td th:text="${inscription.creneau.atelier.titre}">Titre</td></tr>
             <tr><td>Créneau</td><td th:text="${inscription.creneau.horaireDebut} + 'h'">Horaire</td></tr>
@@ -43,29 +52,30 @@
                     <span th:if="${inscription.statut.name() == 'REFUSEE'}" style="color: red;">❌ Refusée</span>
                 </td>
             </tr>
-        </table>
+    </table>
 
-        <!-- ✅ CORRECTION : URL corrigée pour correspondre au contrôleur -->
-        <form th:if="${inscription.statut.name() == 'EN_ATTENTE'}"
-              th:action="@{/inscriptions/desinscrire/{id}(id=${inscription.id})}"
-              method="post"
-              style="display: inline;"
-              onsubmit="return confirm('Êtes-vous sûr de vouloir vous désinscrire ?');">
-            <button type="submit" class="btn-desinscription">Se désinscrire</button>
-        </form>
+        <div style="margin-top: 10px;">
+            <button th:if="${inscription.statut.name() == 'EN_ATTENTE' or inscription.statut.name() == 'VALIDEE'}"
+                    type="button"
+                    class="btn btn-desinscription"
+                    th:onclick="'deleteInscription(' + ${inscription.id} + ')'">
+                Se désinscrire
+            </button>
 
-        <span th:if="${inscription.statut.name() != 'EN_ATTENTE'}"
-              style="color: #999; font-style: italic;">
-            (Désinscription non disponible)
-        </span>
+            <span th:if="${inscription.statut.name() == 'REFUSEE'}"
+                  style="color: #999; font-style: italic;">
+                (Désinscription non disponible)
+            </span>
+        </div>
+        <hr>
     </div>
 </div>
 
 <!-- ✅ Lien pour nouvelle inscription -->
 <div style="text-align: center; margin: 30px;">
-    <a th:href="@{/inscriptions/nouvelle}" class="btn btn-primary">➕ Nouvelle inscription</a>
+    <a th:href="@{/nouvelle-inscription}" class="btn btn-primary">Nouvelle inscription</a>
 </div>
 
-<script th:src="@{/js/inscriptions.js}"></script>
+<script th:src="@{/js/deleteInscription.js}"></script>
 </body>
 </html>

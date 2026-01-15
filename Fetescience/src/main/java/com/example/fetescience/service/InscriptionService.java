@@ -115,7 +115,7 @@ public class InscriptionService {
      * ✅ Créer une inscription (ancien contrôleur - par ID)
      */
     @Transactional
-    public void creerInscription(Long participantId, Long creneauId) {
+    public Inscription creerInscription(Long participantId, Long creneauId) {
         Personne personne = personneRepository.findById(participantId)
                 .orElseThrow(() -> new IllegalArgumentException("Participant non trouvé"));
 
@@ -132,7 +132,7 @@ public class InscriptionService {
         }
 
         Inscription inscription = new Inscription(participant, creneau);
-        inscriptionRepository.save(inscription);
+        return  inscriptionRepository.save(inscription);
     }
 
     /**

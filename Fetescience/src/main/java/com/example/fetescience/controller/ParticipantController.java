@@ -26,38 +26,7 @@ public class ParticipantController {
         this.personneRepository = personneRepository;
     }
 
-    /**
-     * ✅ Page "Mes inscriptions" (utilise inscription.html)
+    /*
+    The previous code isnt useful
      */
-    @GetMapping("/inscriptions")
-    public String mesInscriptions(Authentication authentication, Model model) {
-        String email = authentication.getName();
-        Personne personne = personneRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé"));
-
-        List<Inscription> inscriptions = inscriptionService.getInscriptionsByEmail(email);
-
-        model.addAttribute("participant", personne);
-        model.addAttribute("inscriptions", inscriptions);
-
-        // ✅ CHANGÉ : Utilise "inscription" au lieu de "mes_inscriptions"
-        return "inscription";
-    }
-
-    /**
-     * ✅ Se désinscrire d'un atelier
-     */
-    @PostMapping("/inscriptions/desinscrire/{id}")
-    public String desinscrire(@PathVariable Long id,
-                              Authentication authentication,
-                              RedirectAttributes redirectAttributes) {
-        try {
-            inscriptionService.desinscrire(id);
-            redirectAttributes.addFlashAttribute("success", "Désinscription effectuée !");
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-        }
-
-        return "redirect:/participant/inscriptions";
-    }
 }

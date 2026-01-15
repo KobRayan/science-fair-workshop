@@ -3,8 +3,8 @@ package com.example.fetescience.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter @Setter
@@ -21,7 +21,7 @@ public class Atelier {
     private Animateur animateur;
 
     @OneToMany(mappedBy = "atelier", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Creneau> creneaux = new ArrayList<>();
+    private Set<Creneau> creneaux = new HashSet<>();
 
     public Atelier() {}
 
@@ -29,9 +29,6 @@ public class Atelier {
         this.titre = titre;
     }
 
-    public void setAnimateur(Animateur animateur) {
-        this.animateur = animateur;
-    }
 
     public void ajouterCreneau(Creneau c) {
         creneaux.add(c);
