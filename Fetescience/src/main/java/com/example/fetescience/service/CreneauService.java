@@ -27,6 +27,11 @@ public class CreneauService {
         return repo.findAll();
     }
 
+    // AJOUT : Méthode pour récupérer un créneau spécifique
+    public Creneau getById(Long id) {
+        return repo.findById(id).orElseThrow(() -> new RuntimeException("Créneau introuvable"));
+    }
+
     public Creneau addCreneauToAtelier(Atelier atelier, Creneau creneau) {
         for (Creneau existing : atelier.getCreneaux()) {
             if (existing.chevauche(creneau)) {

@@ -3,54 +3,113 @@ package com.example.fetescience.controller;
 import com.example.fetescience.model.Animateur;
 import com.example.fetescience.model.Atelier;
 import com.example.fetescience.model.Creneau;
-import com.example.fetescience.model.Personne; // Or 'User' if you have a generic User class
 import com.example.fetescience.service.AtelierService;
+import com.example.fetescience.service.CreneauService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/animateur/ateliers") // Groups all these URLs under this prefix
 public class AtelierController {
 
     private final AtelierService atelierService;
+    private final CreneauService creneauService;
 
-    public AtelierController(AtelierService atelierService) {
+    public AtelierController(AtelierService atelierService, CreneauService creneauService) {
         this.atelierService = atelierService;
+        this.creneauService = creneauService;
     }
-/// ***************************** Gestion de creation d'atelier ******************
-    // 1. Display the Form (GET)
-    @GetMapping("/nouveau")
-    public String afficherFormulaireCreation(HttpSession session, Model model) {
-        // Security Check: Is user logged in and is an Animateur?
-        if (!isAnimateur(session)) {
-            return "redirect:/login";
+/// ***************************** Gestion de creation d'atelier ******************  (CREATE, EDIT, DELETE)
+    // 1. Display the Form (GET) for creation and edit
+@GetMapping({"/nouveau", "/{id}/modifier"})
+    public String afficherFormulaire(
+            @PathVariable(required = false) Long id,
+            HttpSession session,
+            Model model
+    ) {
+        if (!isAnimateur(session)) return "redirect:/auth/login";
+
+        Animateur loggedUser = (Animateur) session.getAttribute("user");
+        Atelier atelier;
+
+        if (id == null) {
+            // Creation
+            atelier = new Atelier();
+        } else {
+            //  Modification
+            atelier = atelierService.getById(id);
+
+            if (!atelier.getAnimateur().getId().equals(loggedUser.getId())) {
+                return "redirect:/animateur_page"; //Security check
+            }
         }
 
-        model.addAttribute("atelier", new Atelier());
-        return "nouvel_atelier"; // We will create this HTML file next
+        model.addAttribute("atelier", atelier);
+        return "nouvel_atelier";
     }
-
     // 2. Process the Form (POST)
     @PostMapping
-    public String creerAtelier(@ModelAttribute Atelier atelier, HttpSession session) {
-        // Security Check
+    public String sauvegarderAtelier(@ModelAttribute Atelier atelier, HttpSession session, RedirectAttributes redirectAttributes) {
+        if (!isAnimateur(session)) return "redirect:/auth/login";
+
+        Animateur loggedUser = (Animateur) session.getAttribute("user");
+
+        if (atelier.getId() != null) {
+            // === UPDATE MODE ===
+            Atelier existingAtelier = atelierService.getById(atelier.getId());
+
+            // Security Check
+            if (!existingAtelier.getAnimateur().getId().equals(loggedUser.getId())) {
+                return "redirect:/animateur_page";
+            }
+
+            // Update fields
+            existingAtelier.setTitre(atelier.getTitre());
+            existingAtelier.setDescription(atelier.getDescription());
+
+            atelierService.create(existingAtelier); // Save updates
+            redirectAttributes.addFlashAttribute("success", "Atelier modifié avec succès.");
+            return "redirect:/animateur/ateliers/" + existingAtelier.getId() + "/gestion";
+
+        } else {
+            // === CREATE MODE ===
+            atelier.setAnimateur(loggedUser);
+            Atelier savedAtelier = atelierService.create(atelier);
+            redirectAttributes.addFlashAttribute("success", "Atelier créé avec succès.");
+            return "redirect:/animateur/ateliers/" + savedAtelier.getId() + "/gestion";
+        }
+    }
+
+    // Delete Atelier Endpoint
+    @PostMapping("/{id}/supprimer")
+    public String supprimerAtelier(@PathVariable Long id, HttpSession session, RedirectAttributes redirectAttributes) {
+        // 1. Security Check
         if (!isAnimateur(session)) {
-            return "redirect:/login";
+            return "redirect:/auth/login";
         }
 
-        // KEY STEP: Bind the logged-in Animateur to the Atelier
-        Animateur loggedInAnimateur = (Animateur) session.getAttribute("user");
-        atelier.setAnimateur(loggedInAnimateur);
+        // Fetch Atelier to check ownership
+        Atelier atelier = atelierService.getById(id);
+        Animateur loggedUser = (Animateur) session.getAttribute("user");
 
-        // Save the "Shell" (Atelier without creneaux yet)
-        Atelier savedAtelier = atelierService.create(atelier);
+        // Ownership Check (Critical Security)
+        if (atelier == null || !atelier.getAnimateur().getId().equals(loggedUser.getId())) {
+            redirectAttributes.addFlashAttribute("error", "Action non autorisée.");
+            return "redirect:/animateur_page";
+        }
 
-        // Redirect to the "Management" page where they will add Creneaux
-        // (We will build this redirect target in the next step)
-        return "redirect:/animateur/ateliers/" + savedAtelier.getId() + "/gestion";
+        // 4. Perform Delete
+        atelierService.delete(id);
+
+        redirectAttributes.addFlashAttribute("success", "L'atelier '" + atelier.getTitre() + "' a été supprimé.");
+        return "redirect:/animateur_page";
     }
+
+
+
 
     /// ***************************** Gestion d'ajout de creneau à l'atelier ******************
 
@@ -59,7 +118,7 @@ public class AtelierController {
     @GetMapping("/{id}/gestion")
     public String gererAtelier(@PathVariable Long id, HttpSession session, Model model) {
         if (!isAnimateur(session)) {
-            return "redirect:/login";
+            return "redirect:/auth/login";
         }
 
         // Fetch the Atelier
@@ -80,19 +139,57 @@ public class AtelierController {
 
     // 4. Add a Creneau (POST)
     @PostMapping("/{atelierId}/creneaux")
-    public String ajouterCreneau(@PathVariable Long atelierId, @ModelAttribute Creneau creneau, HttpSession session) {
+    public String sauvegarderCreneau(@PathVariable Long atelierId, @ModelAttribute Creneau creneauForm,
+                                      HttpSession session, RedirectAttributes redirectAttributes) {
         if (!isAnimateur(session)) {
-            return "redirect:/login";
+            return "redirect:/auth/login";
         }
 
         Atelier atelier = atelierService.getById(atelierId);
+        // Check is the animateur editing/saving is the user himself
+        Animateur loggedUser = (Animateur) session.getAttribute("user");
+        if (!atelier.getAnimateur().getId().equals(loggedUser.getId())) {
+            return "redirect:/animateur_page"; // TENTATIVE DE HACK détectée
+        }
 
-        // Use the helper method in your Atelier entity to link them
-        atelier.ajouterCreneau(creneau);
+        try {
 
-        // Saving the Atelier will automatically save the new Creneau
-        // because of cascade = CascadeType.ALL in your model
-        atelierService.create(atelier);
+
+            if (creneauForm.getId() != null) {
+                // === MODE MODIFICATION ===
+                // On récupère le créneau existant en base pour ne pas perdre les inscriptions
+                Creneau creneauExistant = creneauService.getById(creneauForm.getId());
+
+                // 🚨 SÉCURITÉ CRITIQUE 🚨
+                // On vérifie que le créneau envoyé via le champ caché appartient bien
+                // à l'atelier de l'URL (qui appartient à l'animateur connecté).
+                if (!creneauExistant.getAtelier().getId().equals(atelierId)) {
+                    // Si l'ID ne correspond pas, c'est que quelqu'un a trafiqué le formulaire HTML
+                    throw new RuntimeException("Tentative de modification illégale !");
+                }
+
+                // On met à jour uniquement les champs modifiables
+                creneauExistant.setHoraireDebut(creneauForm.getHoraireDebut());
+                creneauExistant.setDuree(creneauForm.getDuree());
+                creneauExistant.setCapacite(creneauForm.getCapacite());
+                creneauExistant.setLieu(creneauForm.getLieu());
+
+                // On sauvegarde (le service gère le save)
+                creneauService.create(creneauExistant);
+            } else {
+
+                // Use the helper method in your Atelier entity to link them
+                atelier.ajouterCreneau(creneauForm);
+                // Saving the Atelier will automatically save the new Creneau because of cascade = CascadeType.ALL in  model
+                atelierService.create(atelier);
+            }
+        }
+        catch (RuntimeException e) {
+            // GÉRER LE "500"
+            // Au lieu de planter, on renvoie l'utilisateur vers la page avec un message
+            redirectAttributes.addFlashAttribute("error", "Erreur : Ce créneau n'existe plus ou est invalide.");
+            return "redirect:/animateur/ateliers/" + atelierId + "/gestion";
+        }
 
         return "redirect:/animateur/ateliers/" + atelierId + "/gestion";
     }

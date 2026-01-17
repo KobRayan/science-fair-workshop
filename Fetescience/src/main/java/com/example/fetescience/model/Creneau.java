@@ -60,17 +60,22 @@ public class Creneau {
         return (debutThis < finAutre) && (finThis > debutAutre);
     }
 
-   /* @Override
+    // This will appear in JSON as "placesRestantes"
+    public int getPlacesRestantes() {
+        if (inscriptions == null) return capacite;
+        return Math.max(0, capacite - inscriptions.size());
+    }
+   @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Creneau creneau = (Creneau) o;
         return this.id != null && this.id.equals(creneau.id);
-    }*/
+    }
 
-   /* @Override
+   @Override
     public int hashCode() {
-        return Objects.hash(id);
-    }*/
+        return 31;
+    }
 
 }

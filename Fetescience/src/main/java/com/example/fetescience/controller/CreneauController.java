@@ -5,10 +5,7 @@ import com.example.fetescience.model.Participant;
 import com.example.fetescience.repository.CreneauRepository;
 import com.example.fetescience.repository.ParticipantRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -60,6 +57,7 @@ public class CreneauController {
 
     // ✅ NEW ENDPOINT: Called by JavaScript when you select an Atelier
     @GetMapping("/api/ateliers/{atelierId}/creneaux")
+    @ResponseBody
     public ResponseEntity<List<Creneau>> getCreneauxByAtelier(@PathVariable Long atelierId) {
         // Uses the method we fixed earlier (sorted by time)
         List<Creneau> creneaux = creneauRepository.findByAtelierIdOrderByHoraireDebutAsc(atelierId);

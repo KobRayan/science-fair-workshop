@@ -3,17 +3,19 @@ package com.example.fetescience.service;
 import com.example.fetescience.model.Animateur;
 import com.example.fetescience.repository.AnimateurRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
 public class AnimateurService {
     private final AnimateurRepository repo;
+    private final PasswordEncoder passwordEncoder;
 
-    public AnimateurService(AnimateurRepository repo){
+    public AnimateurService(AnimateurRepository repo, PasswordEncoder passwordEncoder) {
         this.repo = repo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Animateur create(Animateur a) {
@@ -23,6 +25,13 @@ public class AnimateurService {
         if (repo.findByNom(a.getNom()).isPresent()) {
             throw new IllegalArgumentException("Animateur exists!");
         }
+
+        // ✅ Hasher le mot de passe
+        a.setPassword(passwordEncoder.encode(a.getPassword()));
+
+        // ✅ Activer le compte par défaut
+        a.setAccountVerified(true);
+
         return repo.save(a);
     }
 
