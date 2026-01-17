@@ -60,6 +60,11 @@ public class Creneau {
         return (debutThis < finAutre) && (finThis > debutAutre);
     }
 
+    // This will appear in JSON as "placesRestantes"
+    public int getPlacesRestantes() {
+        if (inscriptions == null) return capacite;
+        return Math.max(0, capacite - inscriptions.size());
+    }
    @Override
     public boolean equals(Object o) {
         if (this == o) return true;

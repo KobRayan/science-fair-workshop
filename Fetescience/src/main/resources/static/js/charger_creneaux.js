@@ -1,52 +1,141 @@
-async function chargerCreneaux() {
-    const atelierId = document.getElementById("atelierSelect").value;
-    const creneauSelect = document.getElementById("creneauId");
+/* * Updates the content of the info box based on the current selection.
+ */
+function updateInfoBox(type) {
+    const select = document.getElementById(type === 'atelier' ? 'atelier' : 'creneau');
+
+    if (!select || select.selectedIndex <= 0) return;
+
+    const selectedOption = select.options[select.selectedIndex];
+
+    if (type === 'atelier') {
+        document.getElementById('info-atelier-titre').innerText = selectedOption.dataset.titre || "";
+        document.getElementById('info-atelier-animateur').innerText = selectedOption.dataset.animateur || "";
+
+        const desc = selectedOption.dataset.description;
+        document.getElementById('info-atelier-description').innerText = desc ? desc : "Aucune description disponible.";
+
+    } else if (type === 'creneau') {
+        document.getElementById('info-creneau-horaire').innerText = selectedOption.dataset.horaire || "";
+        document.getElementById('info-creneau-duree').innerText = selectedOption.dataset.duree || "";
+        document.getElementById('info-creneau-lieu').innerText = selectedOption.dataset.lieu || "";
+    }
+}
+
+/* * Called when the ATELIER selection changes
+ */
+function chargerCreneaux() {
+    const atelierSelect = document.getElementById("atelier");
+    const atelierId = atelierSelect ? atelierSelect.value : null;
+
+    const creneauSelect = document.getElementById("creneau");
     const creneauGroup = document.getElementById("creneau-group");
-    const btnSubmit = document.getElementById("btn-submit");
+    const submitBtn = document.getElementById("btn-submit"); // ✅ Get the button
 
-    creneauSelect.innerHTML = '';
-    btnSubmit.disabled = true; // Reset to disabled
+    // 1. Reset Creneau List
+    creneauSelect.innerHTML = '<option value="" disabled selected>-- Chargement... --</option>';
+    creneauSelect.disabled = true;
 
-    if(!atelierId) {
-        creneauGroup.style.display = 'none';
+    // 2. ✅ FIX: Disable button immediately when atelier changes
+    if (submitBtn) submitBtn.disabled = true;
+
+    // 3. Hide Creneau Details
+    const creneauDetails = document.getElementById("details-creneau");
+    if (creneauDetails) creneauDetails.style.display = 'none';
+
+    // 4. Update Atelier Details if open
+    const atelierDetails = document.getElementById("details-atelier");
+    if (atelierDetails && atelierDetails.style.display === 'block') {
+        updateInfoBox('atelier');
+    }
+
+    if (!atelierId) {
+        if (creneauGroup) creneauGroup.style.display = 'none';
         return;
     }
 
-    creneauGroup.style.display = 'block';
+    // 5. Fetch new Creneaux
+    fetch(`/api/ateliers/${atelierId}/creneaux`)
+        .then(response => {
+            if (!response.ok) throw new Error("Erreur réseau");
+            return response.json();
+        })
+        .then(data => {
+            creneauSelect.innerHTML = '<option value="" disabled selected>-- Sélectionnez un créneau --</option>';
 
-    try {
-        const response = await fetch(`/api/ateliers/${atelierId}/creneaux`);
-        const creneaux = await response.json();
-
-        let hasAvailableSlot = false;
-
-        creneaux.forEach(c => {
-            const opt = document.createElement("option");
-            opt.value = c.id;
-
-            if(c.statut) { // Assuming statut means "COMPLET"/Full
-                opt.text = c.horaireDebut + "h (COMPLET)";
-                opt.disabled = true;
+            if (data.length === 0) {
+                const option = document.createElement("option");
+                option.text = "Aucun créneau disponible";
+                option.disabled = true;
+                creneauSelect.add(option);
             } else {
-                opt.text = c.horaireDebut + "h";
-                hasAvailableSlot = true; // Found at least one open slot
+                data.forEach(creneau => {
+                    const option = document.createElement("option");
+                    option.value = creneau.id;
+                    option.text = `${creneau.horaireDebut}h00 - ${creneau.lieu}`;
+
+                    // Dataset
+                    option.dataset.horaire = creneau.horaireDebut + "h00";
+                    option.dataset.duree = creneau.duree + " min";
+                    option.dataset.lieu = creneau.lieu;
+
+                    const places = creneau.placesRestantes !== undefined ? creneau.placesRestantes : 0;
+
+                    if (places <= 0) {
+                        option.disabled = true;
+                        option.text += " [COMPLET]";
+                        option.style.color = "#dc3545";
+                    } else {
+                        option.text += ` (Places: ${places})`;
+                    }
+
+                    creneauSelect.add(option);
+                });
+                creneauSelect.disabled = false;
             }
 
-            creneauSelect.add(opt);
+            if (creneauGroup) creneauGroup.style.display = 'block';
+        })
+        .catch(error => {
+            console.error("Erreur:", error);
+            creneauSelect.innerHTML = '<option value="" disabled selected>-- Erreur de chargement --</option>';
+            if (creneauGroup) creneauGroup.style.display = 'block';
         });
+}
 
-        // ✅Enable button immediately if there is a valid choice
-        // The browser automatically selects the first non-disabled option.
-        if (hasAvailableSlot && creneauSelect.value) {
-            btnSubmit.disabled = false;
-        }
+/* * Called when the CRENEAU selection changes
+ */
+function onCreneauChange() {
+    const creneauSelect = document.getElementById("creneau");
+    const submitBtn = document.getElementById("btn-submit");
+    const box = document.getElementById("details-creneau");
 
-        // Keep onchange in case they switch to a different slot
-        creneauSelect.onchange = () => {
-            btnSubmit.disabled = false;
-        };
+    // ✅ FIX: Enable button if a valid value is selected
+    if (submitBtn) {
+        // If value is truthy (not empty string), enable button
+        submitBtn.disabled = !creneauSelect.value;
+    }
 
-    } catch (error) {
-        console.error("Erreur chargement créneaux", error);
+    // Only update info box if it is already visible
+    if (box && box.style.display === 'block') {
+        updateInfoBox('creneau');
+    }
+}
+
+/* * Handles clicking the "Eye" icon
+ */
+function toggleDetails(type) {
+    const select = document.getElementById(type === 'atelier' ? 'atelier' : 'creneau');
+    const box = document.getElementById("details-" + type);
+
+    if (select.selectedIndex <= 0) {
+        alert("Veuillez d'abord sélectionner une option.");
+        return;
+    }
+
+    if (box.style.display === 'block') {
+        box.style.display = 'none';
+    } else {
+        updateInfoBox(type);
+        box.style.display = 'block';
     }
 }

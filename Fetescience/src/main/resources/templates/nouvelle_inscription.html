@@ -7,7 +7,6 @@
 </head>
 <body>
 
-<!-- ✅ NAVBAR ADDED HERE -->
 <div th:replace="~{fragments/navbar :: user-bar}"></div>
 
 <div class="container">
@@ -24,7 +23,6 @@
 
             <div class="form-group">
                 <label for="nom">Votre Nom :</label>
-                <!-- PRE-FILLED & READONLY IF LOGGED IN -->
                 <input
                         type="text"
                         id="nom"
@@ -40,19 +38,45 @@
                 </small>
             </div>
 
-            <!-- ... (Keep Atelier & Creneau Selects exactly as before) ... -->
             <div class="form-group">
-                <label for="atelierSelect">Atelier :</label>
-                <select id="atelierSelect" onchange="chargerCreneaux()">
-                    <option value="">-- Sélectionnez un atelier --</option>
-                    <option th:each="atelier : ${ateliers}" th:value="${atelier.id}" th:text="${atelier.titre}"></option>
-                </select>
+                <label for="atelier">Atelier :</label>
+                <div class="input-with-icon">
+                    <select id="atelier" onchange="chargerCreneaux()">
+                        <option value="">-- Sélectionnez un atelier --</option>
+                        <option th:each="atelier : ${ateliers}"
+                                th:value="${atelier.id}"
+                                th:text="${atelier.titre}"
+                                th:data-titre="${atelier.titre}"
+                                th:data-animateur="${atelier.animateur != null ? atelier.animateur.nom : 'Non assigné'}"
+                                th:data-description="${atelier.description}"
+
+                        </option>
+                    </select>
+                    <img th:src="@{/images/view.png}" class="view-icon" onclick="toggleDetails('atelier')" alt="Voir détails" title="Voir les détails de l'atelier">
+                </div>
+
+                <div id="details-atelier" class="info-box" style="display:none;">
+                    <h4>Détails de l'Atelier</h4>
+                    <p><strong>Titre :</strong> <span id="info-atelier-titre"></span></p>
+                    <p><strong>Description :</strong> <span id="info-atelier-description"></span></p>
+                    <p><strong>Animateur :</strong> <span id="info-atelier-animateur"></span></p>
+                </div>
             </div>
 
             <div class="form-group" id="creneau-group" style="display:none;">
-                <label for="creneauId">Créneau disponible :</label>
-                <select id="creneauId" name="creneauId" required></select>
+                <label for="creneau">Créneau disponible :</label>
+                <div class="input-with-icon">
+                    <select id="creneau" name="creneauId" required onchange="onCreneauChange()"></select>
+                    <img th:src="@{/images/view.png}" class="view-icon" onclick="toggleDetails('creneau')" alt="Voir détails" title="Voir les détails du créneau">
+                </div>
                 <small id="creneau-msg">Seuls les créneaux avec des places sont affichés.</small>
+
+                <div id="details-creneau" class="info-box" style="display:none;">
+                    <h4>Détails du Créneau</h4>
+                    <p><strong>Horaire :</strong> <span id="info-creneau-horaire"></span></p>
+                    <p><strong>Durée :</strong> <span id="info-creneau-duree"></span></p>
+                    <p><strong>Lieu :</strong> <span id="info-creneau-lieu"></span></p>
+                </div>
             </div>
 
             <div class="form-actions">
@@ -62,12 +86,7 @@
     </main>
 </div>
 
-
 <script th:src="@{/js/charger_creneaux.js}"></script>
 
-<style>
-    .readonly-input { background-color: #e9ecef; cursor: not-allowed; }
-</style>
 </body>
 </html>
-

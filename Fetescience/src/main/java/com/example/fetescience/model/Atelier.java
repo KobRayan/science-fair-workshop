@@ -1,6 +1,7 @@
 package com.example.fetescience.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.HashSet;
@@ -15,6 +16,13 @@ public class Atelier {
     private Long id;
 
     private String titre;
+
+    // Description with 500 char limit
+    // @Column creates a VARCHAR(500) in the DB
+    // @Size performs validation in Java before saving
+    @Column(length = 500)
+    @Size(max = 500, message = "La description ne doit pas dépasser 500 caractères")
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "animateur_id")
