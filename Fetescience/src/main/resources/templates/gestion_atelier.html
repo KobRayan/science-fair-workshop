@@ -6,13 +6,17 @@
     <link rel="stylesheet" th:href="@{/css/inscription.css}">
     <link rel="stylesheet" th:href="@{/css/management_grid.css}">
 
+    <!-- ✅ Leaflet CSS (AJOUT) -->
+    <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
 </head>
 <body>
 
 <div th:replace="~{fragments/navbar :: user-bar}"></div>
 
 <div class="container" style="max-width: 1100px;">
-
 
     <div class="dashboard-header">
         <div class="header-text">
@@ -27,9 +31,9 @@
 
                 <div th:if="${#strings.length(atelier.description) > 100}">
                     <p>
-                    <span id="desc-short">
-                        <span th:text="${#strings.substring(atelier.description, 0, 100)}"></span>...
-                    </span>
+                        <span id="desc-short">
+                            <span th:text="${#strings.substring(atelier.description, 0, 100)}"></span>...
+                        </span>
 
                         <span id="desc-full" style="display:none;" th:text="${atelier.description}"></span>
 
@@ -43,19 +47,16 @@
                     </p>
                 </div>
             </div>
-
-
         </div>
 
-
-        <div style="margin-top: 20px; display: flex;  flex-direction: column;   gap: 15px; align-items: flex-start; flex-shrink: 0;" >
+        <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px; align-items: flex-start; flex-shrink: 0;">
             <a th:href="@{/animateur_page}" class="btn btn-secondary btn-header btn-match">
                 Retour au tableau de bord
             </a>
 
             <a th:href="@{/animateur/ateliers/{id}/modifier(id=${atelier.id})}"
                class="btn btn-navbar btn-outline btn-edit btn-match">
-               <img th:src="@{/images/edit_icon.png}" alt="Edit" style="width: 20px; height: 20px;">
+                <img th:src="@{/images/edit_icon.png}" alt="Edit" style="width: 20px; height: 20px;">
                 Modifier
             </a>
 
@@ -71,7 +72,8 @@
         </div>
     </div>
 
-    <div th:if="${success}" class="alert" style="color: #155724; background: #d4edda; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+    <div th:if="${success}" class="alert"
+         style="color: #155724; background: #d4edda; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
         ✅ <span th:text="${success}">Atelier modifié</span>
     </div>
 
@@ -82,6 +84,7 @@
 
     <div class="management-grid">
 
+        <!-- ================= CRÉNEAUX EXISTANTS ================= -->
         <div class="card">
             <h3 style="color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">
                 📅 Créneaux planifiés
@@ -109,7 +112,8 @@
                     <td style="padding: 12px;" th:text="${c.duree} + ' min'">60 min</td>
                     <td style="padding: 12px;" th:text="${c.lieu}">Salle B</td>
                     <td style="padding: 12px;">
-                        <strong th:text="${c.inscriptions.size()}">0</strong> / <span th:text="${c.capacite}">20</span>
+                        <strong th:text="${c.inscriptions.size()}">0</strong> /
+                        <span th:text="${c.capacite}">20</span>
                     </td>
                     <td style="padding: 12px; text-align: center;">
                         <img th:src="@{/images/edit_icon.png}"
@@ -124,6 +128,7 @@
             </table>
         </div>
 
+        <!-- ================= AJOUT CRÉNEAU ================= -->
         <div class="card" style="background-color: #fcfcfc;">
             <h3 id="form-title"
                 style="color: var(--primary-color); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">
@@ -139,7 +144,7 @@
                     <label>Heure de début (H) :</label>
                     <input type="number" th:field="*{horaireDebut}" id="horaire"
                            min="8" max="20" placeholder="ex: 14" required class="form-control">
-                    <small style="color: #888; font-size: 0.8em;">Format 24h (ex: 9, 14, 16)</small>
+                    <small style="color: #888; font-size: 0.8em;">Format 24h</small>
                 </div>
 
                 <div class="form-group">
@@ -160,6 +165,11 @@
                            placeholder="Ex: Salle 12, Bat. B" required class="form-control">
                 </div>
 
+                <!-- ✅ MAP PREVIEW (AJOUT) -->
+                <div id="map-preview"
+                     style="height:250px; width:100%; margin-top:10px; border-radius:8px; border:1px solid #ddd;">
+                </div>
+
                 <div style="display: flex; gap: 10px;">
                     <button type="submit" id="submit-btn" class="btn btn-primary" style="flex: 1;">
                         Ajouter ce créneau
@@ -176,8 +186,11 @@
 
 <div th:replace="~{fragments/footer :: site-footer}"></div>
 
-
-
 <script th:src="@{/js/gererAtelier.js}"></script>
+
+<!-- ✅ Leaflet + map preview JS (AJOUT) -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script th:src="@{/js/map-preview.js}"></script>
+
 </body>
 </html>
