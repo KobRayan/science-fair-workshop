@@ -1,7 +1,10 @@
 package com.example.fetescience.controller;
 
 import com.example.fetescience.model.Inscription;
+import com.example.fetescience.model.Personne;
+import com.example.fetescience.model.Role;
 import com.example.fetescience.service.InscriptionService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +25,17 @@ public class AdminController {
     }
 
     @GetMapping("/inscriptions")
-    public String gererInscriptions(Model model) {
+    public String gererInscriptions(Model model, HttpSession session) {
+
+        Personne user = (Personne) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/auth/login";
+        }
+
+        if (!(user.getRole() == Role.ADMIN)) {
+            return "redirect:/";
+        }
         List<Inscription> inscriptions = inscriptionService.getAllInscriptions();
         model.addAttribute("inscriptions", inscriptions);
         return "admin_inscriptions";
