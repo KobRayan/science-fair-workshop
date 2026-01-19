@@ -43,4 +43,43 @@ document.addEventListener("DOMContentLoaded", () => {
                 mapDiv.innerHTML = "❌ Erreur de chargement de la carte";
             });
     });
+
 });
+
+/* ✅ OUVRIR GOOGLE MAPS AVEC ITINÉRAIRE
+   👉 DOIT ÊTRE GLOBAL (hors DOMContentLoaded) */
+function openGoogleMaps(address) {
+    if (!address) {
+        alert("Adresse non renseignée");
+        return;
+    }
+
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
+    window.open(url, "_blank");
+}
+// ✅ ITINÉRAIRE DEPUIS LA POSITION ACTUELLE
+function openGoogleMapsFromCurrentLocation(destinationAddress) {
+
+    if (!destinationAddress) {
+        alert("Adresse de destination non renseignée");
+        return;
+    }
+
+    if (!navigator.geolocation) {
+        alert("La géolocalisation n'est pas supportée par votre navigateur.");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            const url = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${encodeURIComponent(destinationAddress)}`;
+            window.open(url, "_blank");
+        },
+        () => {
+            alert("Impossible de récupérer votre position.");
+        }
+    );
+}

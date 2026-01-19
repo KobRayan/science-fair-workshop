@@ -1,47 +1,54 @@
+let previewMap = null;
+let previewMarker = null;
+
 document.addEventListener("DOMContentLoaded", () => {
 
-    const input = document.getElementById("lieu");
+    const lieuInput = document.getElementById("lieu");
     const mapDiv = document.getElementById("map-preview");
 
-    if (!input || !mapDiv) return;
+    if (!lieuInput || !mapDiv) return;
 
-    let map = null;
-    let marker = null;
-
-    input.addEventListener("blur", () => {
-        const address = input.value.trim();
-        if (address.length < 5) return;
+    lieuInput.addEventListener("blur", () => {
+        const address = lieuInput.value.trim();
+        if (!address) return;
 
         const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
 
-        fetch(url)
+        fetch(url, {
+            headers: {
+                "Accept": "application/json",
+                "User-Agent": "fetescience-app"
+            }
+        })
             .then(res => res.json())
             .then(data => {
+
                 if (!data || data.length === 0) {
-                    mapDiv.innerHTML = "Adresse introuvable";
+                    mapDiv.innerHTML = "❌ Adresse introuvable";
+                    mapDiv.style.color = "red";
                     return;
                 }
 
                 const lat = data[0].lat;
                 const lon = data[0].lon;
 
-                if (!map) {
-                    map = L.map(mapDiv).setView([lat, lon], 15);
+                if (!previewMap) {
+                    previewMap = L.map(mapDiv).setView([lat, lon], 15);
 
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         attribution: '© OpenStreetMap'
-                    }).addTo(map);
+                    }).addTo(previewMap);
 
-                    marker = L.marker([lat, lon]).addTo(map);
+                    previewMarker = L.marker([lat, lon]).addTo(previewMap);
                 } else {
-                    map.setView([lat, lon], 15);
-                    marker.setLatLng([lat, lon]);
+                    previewMap.setView([lat, lon], 15);
+                    previewMarker.setLatLng([lat, lon]);
                 }
 
-                marker.bindPopup(address).openPopup();
+                previewMarker.bindPopup(address).openPopup();
             })
             .catch(() => {
-                mapDiv.innerHTML = "Erreur lors du chargement de la carte";
+                mapDiv.innerHTML = "❌ Erreur lors du chargement de la carte";
             });
     });
 });

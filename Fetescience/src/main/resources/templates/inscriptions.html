@@ -65,13 +65,37 @@
                 <td th:text="${inscription.creneau.lieu}">Lieu</td>
             </tr>
 
-            <!-- ✅ MAP (AJOUT SANS RIEN SUPPRIMER) -->
+            <!-- ✅ MAP -->
             <tr>
                 <td colspan="2">
                     <div class="map"
                          th:attr="data-address=${inscription.creneau.lieu}"
                          style="height:250px; width:100%; margin-top:10px; border-radius:8px;">
                     </div>
+                </td>
+            </tr>
+            <!-- ✅ BOUTON ITINÉRAIRE GOOGLE MAPS -->
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <button
+                            type="button"
+                            class="btn btn-secondary"
+                            style="margin-top: 10px;"
+                            th:onclick="'openGoogleMaps(' + '\'' + ${inscription.creneau.lieu} + '\'' + ')'">
+                        🧭 Itinéraire Google Maps
+                    </button>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <button
+                            type="button"
+                            class="btn btn-primary"
+                            style="margin-top: 8px;"
+                            th:onclick="'openGoogleMapsFromCurrentLocation(' + '\'' + ${inscription.creneau.lieu} + '\'' + ')'">
+                        📍 Itinéraire depuis ma position
+                    </button>
                 </td>
             </tr>
 
