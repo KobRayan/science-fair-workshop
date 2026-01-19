@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/management_grid.css}">
 
     <!-- ✅ AJOUT : Leaflet CSS (MAP) -->
+    <!-- Leaflet CSS -->
     <link
             rel="stylesheet"
             href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -167,6 +168,8 @@
 
                 <!-- ✅ AJOUT : MAP PREVIEW (aucun champ supprimé) -->
                 <div id="map-preview"
+                     class="map"
+                     data-address=""
                      style="height:250px; width:100%; margin-top:10px; border-radius:8px; border:1px solid #ddd;">
                 </div>
 
