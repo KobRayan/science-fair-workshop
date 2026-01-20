@@ -4,15 +4,10 @@
 
 const mapsRegistry = new Map();
 
-/**
- * Affiche ou met à jour une carte Leaflet
- * @param {HTMLElement} container - div de la map
- * @param {string} adresse - adresse à géocoder
- * @param {number} zoom - niveau de zoom
- */
 function afficherCarte({ container, adresse, zoom = 15 }) {
     if (!container || !adresse) return;
 
+    // ✅ Appel via backend proxy
     fetch(`/api/geocode?address=${encodeURIComponent(adresse)}`)
         .then(res => res.json())
         .then(data => {
@@ -37,7 +32,6 @@ function afficherCarte({ container, adresse, zoom = 15 }) {
 
                 mapsRegistry.set(container, { map, marker });
 
-                // IMPORTANT : recalcul taille si cachée avant
                 setTimeout(() => map.invalidateSize(), 200);
             } else {
                 mapData.map.setView([lat, lon], zoom);
@@ -54,7 +48,7 @@ function afficherCarte({ container, adresse, zoom = 15 }) {
 }
 
 /* =========================
-   1) MAPS STATIQUES
+   MAPS STATIQUES
    ========================= */
 document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".map").forEach(div => {
@@ -66,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =========================
-   2) PREVIEW ADRESSE
+   PREVIEW ADRESSE
    ========================= */
 document.getElementById("lieu")?.addEventListener("blur", e => {
     afficherCarte({
@@ -76,7 +70,7 @@ document.getElementById("lieu")?.addEventListener("blur", e => {
 });
 
 /* =========================
-   3) MAP CRENEAU
+   MAP CRENEAU
    ========================= */
 function afficherMapCreneau(adresse) {
     afficherCarte({
@@ -85,8 +79,12 @@ function afficherMapCreneau(adresse) {
     });
 }
 
+/* =========================
+   GOOGLE MAPS
+   ========================= */
 function openGoogleMaps(address) {
     if (!address) return;
+
     window.open(
         `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`,
         "_blank"
@@ -109,7 +107,9 @@ function openGoogleMapsFromCurrentLocation(destinationAddress) {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
 
-            const url = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${encodeURIComponent(destinationAddress)}`;
+            const url =
+                `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${encodeURIComponent(destinationAddress)}`;
+
             window.open(url, "_blank");
         },
         () => {
