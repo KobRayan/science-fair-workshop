@@ -113,6 +113,12 @@ body {
     cursor: not-allowed;
     transform: none;
 }
+.btn-map {
+    width: 100%;           /* Force la largeur à 100% du conteneur */
+    margin-top: 10px;      /* Espacement du haut */
+    padding: 10px 20px;    /* Espacement interne */
+    box-sizing: border-box; /* Assure que le padding ne dépasse pas */
+}
 
 /* === MESSAGE TÉLÉPHONER === */
 .message-telephoner {

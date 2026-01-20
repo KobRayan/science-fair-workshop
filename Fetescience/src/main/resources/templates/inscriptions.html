@@ -79,10 +79,11 @@
                 <td colspan="2" style="text-align: center;">
                     <button
                             type="button"
-                            class="btn btn-secondary"
+                            class="btn btn-primary btn-map"
                             style="margin-top: 10px;"
-                            th:onclick="'openGoogleMaps(' + '\'' + ${inscription.creneau.lieu} + '\'' + ')'">
-                        🧭 Itinéraire Google Maps
+                            th:data-lieu="${inscription.creneau.lieu}"
+                            onclick="openGoogleMaps(this.getAttribute('data-lieu'))">
+                         Itinéraire Google Maps
                     </button>
                 </td>
             </tr>
@@ -91,10 +92,11 @@
                 <td colspan="2" style="text-align: center;">
                     <button
                             type="button"
-                            class="btn btn-primary"
+                            class="btn btn-primary btn-map"
                             style="margin-top: 8px;"
-                            th:onclick="'openGoogleMapsFromCurrentLocation(' + '\'' + ${inscription.creneau.lieu} + '\'' + ')'">
-                        📍 Itinéraire depuis ma position
+                            th:data-lieu="${inscription.creneau.lieu}"
+                            onclick="openGoogleMapsFromCurrentLocation(this.getAttribute('data-lieu'))">
+                         Itinéraire depuis ma position
                     </button>
                 </td>
             </tr>
@@ -118,7 +120,8 @@
             <button th:if="${inscription.statut.name() == 'EN_ATTENTE' or inscription.statut.name() == 'VALIDEE'}"
                     type="button"
                     class="btn btn-desinscription"
-                    th:onclick="'deleteInscription(' + ${inscription.id} + ')'">
+                    th:data-id="${inscription.id}"
+                    onclick="deleteInscription(this.getAttribute('data-id'))">
                 Se désinscrire
             </button>
 

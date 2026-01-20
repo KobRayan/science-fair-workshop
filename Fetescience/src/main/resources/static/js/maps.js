@@ -13,7 +13,7 @@ function afficherCarte({ container, adresse, zoom = 15 }) {
         .then(res => res.json())
         .then(data => {
             if (!data || data.length === 0) {
-                container.innerHTML = "📍 Adresse introuvable";
+                container.innerHTML = "Adresse introuvable";
                 return;
             }
 
@@ -86,10 +86,8 @@ function afficherMapCreneau(adresse) {
 function openGoogleMaps(address) {
     if (!address) return;
 
-    window.open(
-        `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`,
-        "_blank"
-    );
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+    window.open(url, "_blank");
 }
 
 function openGoogleMapsFromCurrentLocation(destinationAddress) {
@@ -103,13 +101,14 @@ function openGoogleMapsFromCurrentLocation(destinationAddress) {
         return;
     }
 
+
     navigator.geolocation.getCurrentPosition(
         position => {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
 
-            const url =
-                `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${encodeURIComponent(destinationAddress)}`;
+            // Uses the standard "Directions" API
+            const url = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${encodeURIComponent(destinationAddress)}`;
 
             window.open(url, "_blank");
         },

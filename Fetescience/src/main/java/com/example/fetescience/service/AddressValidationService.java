@@ -1,4 +1,4 @@
-package com.example.fetescience.model;
+package com.example.fetescience.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
