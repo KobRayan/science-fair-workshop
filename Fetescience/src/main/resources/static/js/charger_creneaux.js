@@ -119,6 +119,8 @@ function onCreneauChange() {
     if (box && box.style.display === 'block') {
         updateInfoBox('creneau');
     }
+    afficherCartePourAdresse(lieu);
+
 }
 
 /* * Handles clicking the "Eye" icon
