@@ -1,67 +1,101 @@
-document.addEventListener("DOMContentLoaded", () => {
+/* =========================
+   MAP MANAGER (UNIQUE)
+   ========================= */
 
-    document.querySelectorAll(".map").forEach((mapDiv) => {
+const mapsRegistry = new Map();
 
-        const address = mapDiv.dataset.address;
+/**
+ * Affiche ou met à jour une carte Leaflet
+ * @param {HTMLElement} container - div de la map
+ * @param {string} adresse - adresse à géocoder
+ * @param {number} zoom - niveau de zoom
+ */
+function afficherCarte({ container, adresse, zoom = 15 }) {
+    if (!container || !adresse) return;
 
-        if (!address) {
-            mapDiv.innerHTML = "📍 Adresse non renseignée";
-            return;
-        }
-
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
-
-        fetch(url, {
-            headers: {
-                "Accept": "application/json",
-                "User-Agent": "fetescience-app"
+    fetch(`/api/geocode?address=${encodeURIComponent(adresse)}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data || data.length === 0) {
+                container.innerHTML = "📍 Adresse introuvable";
+                return;
             }
-        })
-            .then(res => res.json())
-            .then(data => {
 
-                if (!data || data.length === 0) {
-                    mapDiv.innerHTML = "📍 Adresse introuvable";
-                    return;
-                }
+            const lat = data[0].lat;
+            const lon = data[0].lon;
 
-                const lat = data[0].lat;
-                const lon = data[0].lon;
+            let mapData = mapsRegistry.get(container);
 
-                const map = L.map(mapDiv).setView([lat, lon], 15);
+            if (!mapData) {
+                const map = L.map(container).setView([lat, lon], zoom);
 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap'
+                L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                    attribution: "© OpenStreetMap"
                 }).addTo(map);
 
-                L.marker([lat, lon])
-                    .addTo(map)
-                    .bindPopup(address)
-                    .openPopup();
-            })
-            .catch(() => {
-                mapDiv.innerHTML = "❌ Erreur de chargement de la carte";
-            });
-    });
+                const marker = L.marker([lat, lon]).addTo(map);
 
+                mapsRegistry.set(container, { map, marker });
+
+                // IMPORTANT : recalcul taille si cachée avant
+                setTimeout(() => map.invalidateSize(), 200);
+            } else {
+                mapData.map.setView([lat, lon], zoom);
+                mapData.marker.setLatLng([lat, lon]);
+            }
+
+            mapsRegistry.get(container).marker
+                .bindPopup(adresse)
+                .openPopup();
+        })
+        .catch(() => {
+            container.innerHTML = "❌ Erreur de chargement de la carte";
+        });
+}
+
+/* =========================
+   1) MAPS STATIQUES
+   ========================= */
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".map").forEach(div => {
+        afficherCarte({
+            container: div,
+            adresse: div.dataset.address
+        });
+    });
 });
 
-/* ✅ OUVRIR GOOGLE MAPS AVEC ITINÉRAIRE
-   👉 DOIT ÊTRE GLOBAL (hors DOMContentLoaded) */
-function openGoogleMaps(address) {
-    if (!address) {
-        alert("Adresse non renseignée");
-        return;
-    }
+/* =========================
+   2) PREVIEW ADRESSE
+   ========================= */
+document.getElementById("lieu")?.addEventListener("blur", e => {
+    afficherCarte({
+        container: document.getElementById("map-preview"),
+        adresse: e.target.value
+    });
+});
 
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
-    window.open(url, "_blank");
+/* =========================
+   3) MAP CRENEAU
+   ========================= */
+function afficherMapCreneau(adresse) {
+    afficherCarte({
+        container: document.getElementById("map-creneau"),
+        adresse
+    });
 }
-// ✅ ITINÉRAIRE DEPUIS LA POSITION ACTUELLE
-function openGoogleMapsFromCurrentLocation(destinationAddress) {
 
+function openGoogleMaps(address) {
+    if (!address) return;
+    window.open(
+        `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`,
+        "_blank"
+    );
+}
+
+function openGoogleMapsFromCurrentLocation(destinationAddress) {
     if (!destinationAddress) {
-        alert("Adresse de destination non renseignée");
+        alert("Adresse non renseignée");
         return;
     }
 
@@ -71,7 +105,7 @@ function openGoogleMapsFromCurrentLocation(destinationAddress) {
     }
 
     navigator.geolocation.getCurrentPosition(
-        (position) => {
+        position => {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
 

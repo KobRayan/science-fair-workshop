@@ -47,8 +47,8 @@
             <div class="form-group">
                 <label for="atelier">Atelier :</label>
                 <div class="input-with-icon">
-                    <select id="atelier" onchange="chargerCreneaux()">
-                        <option value="">-- Sélectionnez un atelier --</option>
+                    <select id="atelier" name="atelierId" onchange="chargerCreneaux()">
+                    <option value="">-- Sélectionnez un atelier --</option>
                         <option th:each="atelier : ${ateliers}"
                                 th:value="${atelier.id}"
                                 th:text="${atelier.titre}"
@@ -100,7 +100,7 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script th:src="@{/js/map-inscription.js}"></script>
+<script th:src="@{/js/maps.js}"></script>
 <script th:src="@{/js/charger_creneaux.js}"></script>
 </body>
 </html>
