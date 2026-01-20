@@ -36,4 +36,8 @@ function afficherMapCreneau(adresse) {
         .catch(() => {
             mapDiv.innerHTML = "❌ Erreur de chargement de la carte";
         });
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 200);
+
 }
