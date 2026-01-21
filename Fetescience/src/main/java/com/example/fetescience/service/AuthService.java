@@ -38,13 +38,19 @@ public class AuthService {
 
         if (role == Role.PARTICIPANT) {
             Participant participant = new Participant(nom, email, encodedPassword);
-            participant.setAccountVerified(true); // ✅ AJOUT : Auto-vérification
+            participant.setAccountVerified(true); // AJOUT : Auto-vérification
             participantRepository.save(participant);
         } else if (role == Role.ANIMATEUR) {
             Animateur animateur = new Animateur(nom, email, encodedPassword);
-            animateur.setAccountVerified(true); // ✅ AJOUT : Auto-vérification
+            animateur.setAccountVerified(true); // AJOUT : Auto-vérification
             animateurRepository.save(animateur);
-        } else {
+        else if (role == Role.ADMIN){
+            Animateur admin = new Animateur(nom, email, encodedPassword);
+            admin.setRole(Role.ADMIN);
+            admin.setAccountVerified(true); // AJOUT : Auto-vérification
+            animateurRepository.save(admin);
+        }
+        else {
             throw new IllegalArgumentException("Rôle invalide pour l'inscription");
         }
     }
