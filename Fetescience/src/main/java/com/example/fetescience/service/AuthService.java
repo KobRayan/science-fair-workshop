@@ -44,6 +44,7 @@ public class AuthService {
             Animateur animateur = new Animateur(nom, email, encodedPassword);
             animateur.setAccountVerified(true); // AJOUT : Auto-vérification
             animateurRepository.save(animateur);
+        }
         else if (role == Role.ADMIN){
             Animateur admin = new Animateur(nom, email, encodedPassword);
             admin.setRole(Role.ADMIN);
