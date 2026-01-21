@@ -44,7 +44,7 @@ function afficherCarte({ container, adresse, zoom = 15 }) {
                 .openPopup();
         })
         .catch(() => {
-            container.innerHTML = "❌ Erreur de chargement de la carte";
+            container.innerHTML = "Erreur de chargement de la carte";
         });
 }
 
