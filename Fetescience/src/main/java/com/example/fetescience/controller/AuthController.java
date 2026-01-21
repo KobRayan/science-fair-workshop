@@ -47,7 +47,7 @@ public class AuthController {
             Role userRole = Role.valueOf(role.toUpperCase());
             authService.registerUser(nom, email, password, userRole);
             model.addAttribute("success", "Compte créé avec succès ! En attente de validation.");
-            return "redirect:/login";
+            return "redirect:login";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "redirect:/register";

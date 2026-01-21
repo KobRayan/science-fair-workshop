@@ -129,6 +129,14 @@ header h1 {
     font-size: 1.1em;
 }
 
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px; /* ✅ this is the key */
+}
+
+
 /* === FORMULAIRE === */
 .form-group {
     margin-bottom: 25px;
@@ -144,6 +152,7 @@ header h1 {
 .form-group input[type="text"],
 .form-group input[type="email"],
 .form-group input[type="tel"],
+.form-group input[type="password"],
 .form-group select {
     width: 100%;
     padding: 12px;
@@ -285,7 +294,19 @@ header h1 {
     color: white !important;
 }
 
+.btn-edit{
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    justify-content: center;
+}
 
+.btn-match {
+    width: 100%;
+}
 
 
 /* === SECTION INFO === */
@@ -339,5 +360,72 @@ footer {
 
     .btn {
         width: 100%;
+    }
+}
+
+
+/* === NOUVEAUX STYLES POUR L'INSCRIPTION (ICONES & DETAILS) === */
+
+/* Champ en lecture seule */
+.readonly-input {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+/* Conteneur Flex pour Select + Icone */
+.input-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-with-icon select {
+    flex-grow: 1; /* Prend l'espace restant */
+}
+
+.view-icon {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.view-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Boîte de détails (Info Box) */
+.info-box {
+    margin-top: 15px;
+    background-color: var(--light-gray);
+    border-left: 4px solid var(--primary-color);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    animation: slideDown 0.3s ease-out;
+}
+
+.info-box h4 {
+    margin-bottom: 10px;
+    color: var(--primary-color);
+    font-size: 1.1em;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.info-box p {
+    margin-bottom: 5px;
+    font-size: 0.95em;
+}
+
+/* Animation d'apparition */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

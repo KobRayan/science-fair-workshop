@@ -25,6 +25,22 @@ public class FetescienceApplication {
                                           CreneauRepository creneauRepo,
                                           AtelierRepository atelierRepo) {
         return (args) -> {
+
+            try{
+
+                Participant admin = new Participant("Admin", "admin@test.com", "admin123");
+                admin.setRole(Role.ADMIN);
+
+                authService.registerUser(admin.getNom(), admin.getEmail(), admin.getPassword(), admin.getRole());
+                System.out.println(" Admin créé : admin@test.com / admin123");
+
+            } catch (IllegalArgumentException e) {
+                System.out.println("L'admin existe déjà");
+            }
+
+
+
+
             /*System.out.println("🧹 NETTOYAGE DE LA BASE DE DONNÉES...");
 
             // 1. Delete Children (Creneaux)

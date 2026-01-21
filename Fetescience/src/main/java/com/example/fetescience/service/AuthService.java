@@ -30,6 +30,10 @@ public class AuthService {
             throw new IllegalArgumentException("Cet email est déjà utilisé");
         }
 
+        if (password == null || password.length() < 6) {
+            throw new IllegalArgumentException("Le mot de passe doit contenir au moins 6 caractères");
+        }
+
         String encodedPassword = passwordEncoder.encode(password);
 
         if (role == Role.PARTICIPANT) {

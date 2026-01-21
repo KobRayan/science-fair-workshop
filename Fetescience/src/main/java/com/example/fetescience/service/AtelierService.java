@@ -36,4 +36,8 @@ public class AtelierService {
         }
         return repo.save(atelier);
     }
+
+    public void delete(Long id) {
+        repo.deleteById(id);
+    }
 }
