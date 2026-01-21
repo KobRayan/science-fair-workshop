@@ -28,11 +28,11 @@ public class FetescienceApplication {
 
             try{
 
-                Participant admin = new Participant("Admin", "admin@test.com", "admin123");
+                Participant admin = new Participant("Dobrina Botcheva", "dobrina.boltcheva@univ-lorraine.fr", "petitchienmignon");
                 admin.setRole(Role.ADMIN);
 
                 authService.registerUser(admin.getNom(), admin.getEmail(), admin.getPassword(), admin.getRole());
-                System.out.println(" Admin créé : admin@test.com / admin123");
+                System.out.println(" Admin créé : dobrina.boltcheva@univ-lorraine.fr / mot de passe");
 
             } catch (IllegalArgumentException e) {
                 System.out.println("L'admin existe déjà");
