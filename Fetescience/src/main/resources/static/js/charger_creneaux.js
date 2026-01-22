@@ -109,16 +109,21 @@ function onCreneauChange() {
     const submitBtn = document.getElementById("btn-submit");
     const box = document.getElementById("details-creneau");
 
-    // ✅ FIX: Enable button if a valid value is selected
     if (submitBtn) {
-        // If value is truthy (not empty string), enable button
         submitBtn.disabled = !creneauSelect.value;
     }
 
-    // Only update info box if it is already visible
-    if (box && box.style.display === 'block') {
-        updateInfoBox('creneau');
-    }
+    if (!creneauSelect.value) return;
+
+    const selectedOption = creneauSelect.options[creneauSelect.selectedIndex];
+    const lieu = selectedOption.dataset.lieu;
+
+    // 🔥 AFFICHER LES DÉTAILS
+    box.style.display = "block";
+    updateInfoBox('creneau');
+
+    // 🔥 AFFICHER LA MAP
+    afficherMapCreneau(lieu);
 }
 
 /* * Handles clicking the "Eye" icon

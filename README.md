@@ -41,12 +41,12 @@ The core backend logic and database structures are fully operational. The projec
 * **User Management:** While user creation is functional, the specific "Animateur Management" page is currently a placeholder awaiting implementation.
 * **Security:** Password storage currently uses plain text for prototyping purposes. Integration of BCrypt for password hashing is scheduled for the next security sprint.
 * **Error Handling:** Basic exception handling is in place. Future updates will improve frontend feedback for HTTP 400 errors to provide a smoother user experience.
+* **Dynamic Scheduling:** enabling full CRUD operations for workshops and time slots via the UI.
+* **Advanced Security:** Completing the implementation of password encryption and CSRF protection.
 
 ## Future Roadmap
 
 * **Frontend Migration:** Transitioning the view layer (or most of them) to a Single Page Application (SPA) using Angular.
-* **Dynamic Scheduling:** enabling full CRUD operations for workshops and time slots via the UI.
-* **Advanced Security:** Completing the implementation of password encryption and CSRF protection.
 * **Group Management:** Adding functionality for teachers to register groups or entire classes.
 * **Containerization:** Implement Docker and Docker Compose to containerize the application and database, simplifying the setup process for developers and enabling consistent deployments.
 

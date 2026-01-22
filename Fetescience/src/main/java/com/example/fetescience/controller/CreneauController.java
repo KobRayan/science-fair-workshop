@@ -63,4 +63,23 @@ public class CreneauController {
         List<Creneau> creneaux = creneauRepository.findByAtelierIdOrderByHoraireDebutAsc(atelierId);
         return ResponseEntity.ok(creneaux);
     }
+    // ✅ VALIDATION D'ADRESSE (OpenStreetMap / Nominatim)
+    @GetMapping("/api/adresse/valider")
+    public ResponseEntity<Boolean> validerAdresse(@RequestParam String adresse) {
+
+        try {
+            String encoded = java.net.URLEncoder.encode(adresse, java.nio.charset.StandardCharsets.UTF_8);
+            String url = "https://nominatim.openstreetmap.org/search?format=json&q=" + encoded;
+
+            org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+            String response = restTemplate.getForObject(url, String.class);
+
+            boolean valide = response != null && response.contains("\"lat\"");
+
+            return ResponseEntity.ok(valide);
+
+        } catch (Exception e) {
+            return ResponseEntity.ok(false);
+        }
+    }
 }

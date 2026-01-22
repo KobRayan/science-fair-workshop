@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <title>Nouvelle inscription - Fête de la Science</title>
+
+    <!-- ✅ Leaflet CSS -->
+    <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
 </head>
+
 <body>
-
 <div th:replace="~{fragments/navbar :: user-bar}"></div>
-
 <div class="container">
     <header>
         <h1>Inscription à un atelier</h1>
@@ -41,8 +47,8 @@
             <div class="form-group">
                 <label for="atelier">Atelier :</label>
                 <div class="input-with-icon">
-                    <select id="atelier" onchange="chargerCreneaux()">
-                        <option value="">-- Sélectionnez un atelier --</option>
+                    <select id="atelier" name="atelierId" onchange="chargerCreneaux()">
+                    <option value="">-- Sélectionnez un atelier --</option>
                         <option th:each="atelier : ${ateliers}"
                                 th:value="${atelier.id}"
                                 th:text="${atelier.titre}"
@@ -71,12 +77,19 @@
                 </div>
                 <small id="creneau-msg">Seuls les créneaux avec des places sont affichés.</small>
 
-                <div id="details-creneau" class="info-box" style="display:none;">
+                <div id="details-creneau" class="info-box">
                     <h4>Détails du Créneau</h4>
+
                     <p><strong>Horaire :</strong> <span id="info-creneau-horaire"></span></p>
                     <p><strong>Durée :</strong> <span id="info-creneau-duree"></span></p>
                     <p><strong>Lieu :</strong> <span id="info-creneau-lieu"></span></p>
+
+                    <!-- ✅ MAP -->
+                    <div id="map-creneau"
+                         style="height:250px; width:100%; margin-top:10px; border-radius:8px;">
+                    </div>
                 </div>
+
             </div>
 
             <div class="form-actions">
@@ -86,7 +99,8 @@
     </main>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script th:src="@{/js/maps.js}"></script>
 <script th:src="@{/js/charger_creneaux.js}"></script>
-
 </body>
 </html>

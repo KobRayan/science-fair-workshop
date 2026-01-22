@@ -4,322 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administration - Ateliers et Créneaux</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/management_grid.css}">
+    <link rel="stylesheet" th:href="@{/css/admin_style.css}">
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        h1 {
-            color: #667eea;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 40px;
-        }
-
-        .alert {
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 10px;
-            font-weight: 500;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-danger {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-        }
-
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
-            margin-top: 5px;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #eee;
-        }
-
-        .tab {
-            padding: 15px 30px;
-            background: #f8f9fa;
-            border: none;
-            cursor: pointer;
-            font-size: 1.1em;
-            font-weight: 600;
-            color: #666;
-            border-radius: 10px 10px 0 0;
-            transition: all 0.3s;
-        }
-
-        .tab.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .atelier-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .atelier-card {
-            background: #f8f9ff;
-            border-radius: 12px;
-            padding: 20px;
-            border: 2px solid #e0e0e0;
-            transition: all 0.3s;
-        }
-
-        .atelier-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .atelier-card h3 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-
-        .creneau-list {
-            margin-top: 15px;
-        }
-
-        .creneau-item {
-            background: white;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 4px solid #667eea;
-        }
-
-        .creneau-item.complet {
-            border-left-color: #dc3545;
-            background: #fff5f5;
-        }
-
-        .creneau-info {
-            flex: 1;
-        }
-
-        .creneau-info strong {
-            color: #667eea;
-            font-size: 1.1em;
-        }
-
-        .creneau-info small {
-            display: block;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .capacite-badge {
-            background: #28a745;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: 600;
-            margin-right: 10px;
-        }
-
-        .capacite-badge.complet {
-            background: #dc3545;
-        }
-
-        .capacite-badge.warning {
-            background: #ffc107;
-            color: #000;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9em;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .btn-edit {
-            background: #007bff;
-            color: white;
-        }
-
-        .btn-edit:hover {
-            background: #0056b3;
-        }
-
-        .btn-add {
-            background: #28a745;
-            color: white;
-            padding: 12px 30px;
-            font-size: 1.1em;
-        }
-
-        .btn-add:hover {
-            background: #218838;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .modal-header h2 {
-            color: #667eea;
-        }
-
-        .btn-close {
-            background: none;
-            border: none;
-            font-size: 2em;
-            cursor: pointer;
-            color: #999;
-        }
-
-        .btn-close:hover {
-            color: #333;
-        }
-
-        .back-link {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .back-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-    </style>
 </head>
 <body>
-<div class="container">
-    <h1>🔬 Administration des Ateliers</h1>
-    <p class="subtitle">Gérez les ateliers, créneaux et capacités</p>
+
+<div th:replace="~{fragments/navbar :: user-bar}"></div>
+
+<div class="container admin-container">
+    <header style="text-align: center; margin-bottom: 40px;">
+        <h1>Administration des Ateliers</h1>
+        <p class="subtitle">Gérez les ateliers, les créneaux et leurs capacités</p>
+    </header>
 
     <div th:if="${success}" class="alert alert-success">
         ✅ <span th:text="${success}"></span>
@@ -328,64 +27,87 @@
         ❌ <span th:text="${error}"></span>
     </div>
 
-    <div class="stats">
+    <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-number" th:text="${ateliers != null ? ateliers.size() : 0}">0</div>
             <div class="stat-label">Ateliers</div>
         </div>
-        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+        <div class="stat-card">
             <div class="stat-number" th:text="${totalCreneaux}">0</div>
             <div class="stat-label">Créneaux</div>
         </div>
-        <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+        <div class="stat-card success">
             <div class="stat-number" th:text="${creneauxDisponibles}">0</div>
             <div class="stat-label">Disponibles</div>
         </div>
-        <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+        <div class="stat-card danger">
             <div class="stat-number" th:text="${creneauxComplets}">0</div>
             <div class="stat-label">Complets</div>
         </div>
     </div>
 
     <div class="tabs">
-        <button class="tab active" onclick="switchTab('ateliers', this)">📋 Ateliers & Créneaux</button>
-        <button class="tab" onclick="switchTab('ajouter', this)">➕ Ajouter un Créneau</button>
+        <button class="tab-btn active" onclick="switchTab('ateliers', this)">Ateliers & Créneaux</button>
+        <button class="tab-btn" onclick="switchTab('ajouter', this)">Ajouter un Créneau</button>
+        <button class="tab-btn" onclick="switchTab('ajouter-atelier', this)">Ajouter un Atelier</button>
     </div>
 
     <div id="ateliers-tab" class="tab-content active">
-        <div class="atelier-grid">
-            <div th:each="atelier : ${ateliers}" class="atelier-card">
-                <h3 th:text="${atelier.titre}">Titre Atelier</h3>
-                <p style="color: #666; margin-bottom: 10px;">
-                    👨‍🏫 <span th:text="${atelier.animateur != null ? atelier.animateur.nom : 'Non assigné'}">Animateur</span>
+        <div class="management-grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));">
+            <div th:each="atelier : ${ateliers}" class="card">
+
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <h3 th:text="${atelier.titre}" style="color: var(--primary-color, #667eea); margin-bottom: 10px;">Titre Atelier</h3>
+
+                    <button class="btn-icon"
+                            style="background: none; border: none; cursor: pointer; opacity: 0.6;"
+                            title="Modifier l'atelier"
+                            th:attr="data-id=${atelier.id},
+                                     data-titre=${atelier.titre},
+                                     data-description=${atelier.description},
+                                     data-animateur-id=${atelier.animateur != null ? atelier.animateur.id : ''}"
+                            onclick="openEditAtelierModal(this)">
+                        <img th:src="@{/images/edit_icon.png}" alt="Edit" style="width: 18px; height: 18px;">
+                    </button>
+                </div>
+
+                <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">
+                    👨‍🏫 <strong th:text="${atelier.animateur != null ? atelier.animateur.nom : 'Non assigné'}">Animateur</strong>
                 </p>
+                <p th:if="${atelier.description}" th:text="${atelier.description}" style="font-size: 0.85em; color: #777; margin-bottom: 15px; font-style: italic; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"></p>
 
                 <div class="creneau-list">
-                    <strong style="color: #333;">Créneaux disponibles :</strong>
-
-                    <div th:if="${atelier.creneaux.isEmpty()}" style="color: #999; font-style: italic; margin-top: 10px;">
+                    <div th:if="${atelier.creneaux.isEmpty()}" style="color: #999; font-style: italic;">
                         Aucun créneau défini
                     </div>
 
                     <div th:each="creneau : ${atelier.creneaux}"
                          class="creneau-item"
                          th:classappend="${creneau.complet ? 'complet' : ''}">
-                        <div class="creneau-info">
-                            <strong th:text="${creneau.horaireDebut + 'h - ' + creneau.lieu}">10h - Salle E406</strong>
-                            <small>
-                                Durée: <span th:text="${creneau.duree}">60</span> min |
-                                Inscriptions: <span th:text="${creneau.inscriptions.size()}">0</span> / <span th:text="${creneau.capacite}">30</span>
+
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; color: #333;">
+                                <span th:text="${creneau.horaireDebut} + 'h'">10h</span>
+                                <span style="font-weight: normal;"> à </span>
+                                <span th:text="${creneau.lieu}">Salle B</span>
+                            </div>
+                            <small style="color: #666;">
+                                ⏳ <span th:text="${creneau.duree}">60</span> min |
+                                👥 <span th:text="${creneau.inscriptions.size()}">0</span>/<span th:text="${creneau.capacite}">20</span>
                             </small>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span class="capacite-badge"
-                                  th:classappend="${creneau.complet ? 'complet' : (creneau.inscriptions.size() >= creneau.capacite * 0.8 ? 'warning' : '')}">
-                                <span th:text="${creneau.capacite - creneau.inscriptions.size()}">10</span> places
-                            </span>
-                            <button class="btn btn-edit"
-                                    th:attr="data-id=${creneau.id}, data-capacite=${creneau.capacite}, data-horaire=${creneau.horaireDebut}, data-lieu=${creneau.lieu}, data-duree=${creneau.duree}"
-                                    onclick="editCreneauFromButton(this)">
-                                ✏️ Modifier
+
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <button class="btn-icon"
+                                    style="background: white; border: 1px solid #ddd; padding: 6px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;"
+                                    th:attr="data-id=${creneau.id},
+                                             data-capacite=${creneau.capacite},
+                                             data-horaire=${creneau.horaireDebut},
+                                             data-lieu=${creneau.lieu},
+                                             data-duree=${creneau.duree},
+                                             data-atelier-titre=${atelier.titre}"
+                                    onclick="openEditModal(this)">
+                                <img th:src="@{/images/edit_icon.png}" alt="Modifier" style="width: 16px; height: 16px;">
                             </button>
                         </div>
                     </div>
@@ -395,54 +117,84 @@
     </div>
 
     <div id="ajouter-tab" class="tab-content">
-        <form th:action="@{/admin/ateliers/creneaux/ajouter}" method="post" style="max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #667eea; margin-bottom: 30px;">➕ Ajouter un nouveau créneau</h2>
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <h2 style="margin-bottom: 20px; color: var(--primary-color, #667eea);">Nouveau créneau</h2>
 
-            <div class="form-group">
-                <label>Atelier</label>
-                <select name="atelierId" required>
-                    <option value="">-- Sélectionnez un atelier --</option>
-                    <option th:each="atelier : ${ateliers}"
-                            th:value="${atelier.id}"
-                            th:text="${atelier.titre}">Atelier</option>
-                </select>
-            </div>
+            <form th:action="@{/admin/ateliers/creneaux/ajouter}" method="post">
+                <div class="form-group">
+                    <label>Atelier concerné</label>
+                    <select name="atelierId" required class="form-control">
+                        <option value="">-- Sélectionnez un atelier --</option>
+                        <option th:each="atelier : ${ateliers}"
+                                th:value="${atelier.id}"
+                                th:text="${atelier.titre}">Atelier</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label>Horaire de début (heure)</label>
-                <input type="number" name="horaireDebut" min="8" max="18" required placeholder="Ex: 10">
-            </div>
+                <div class="form-group">
+                    <label>Horaire de début (Heure)</label>
+                    <input type="number" name="horaireDebut" min="8" max="20" required placeholder="Ex: 14" class="form-control">
+                </div>
 
-            <div class="form-group">
-                <label>Durée (minutes)</label>
-                <input type="number" name="duree" min="30" max="240" required placeholder="Ex: 60">
-            </div>
+                <div class="form-group">
+                    <label>Durée (minutes)</label>
+                    <input type="number" name="duree" min="15" step="15" value="60" required class="form-control">
+                </div>
 
-            <div class="form-group">
-                <label>Lieu</label>
-                <input type="text" name="lieu" required placeholder="Ex: Salle E406">
-            </div>
+                <div class="form-group">
+                    <label>Lieu</label>
+                    <input type="text" name="lieu" required placeholder="Ex: Salle 12" class="form-control">
+                </div>
 
-            <div class="form-group">
-                <label>Capacité maximale</label>
-                <input type="number" name="capacite" min="1" max="100" required placeholder="Ex: 30">
-            </div>
+                <div class="form-group">
+                    <label>Capacité</label>
+                    <input type="number" name="capacite" min="1" max="200" value="20" required class="form-control">
+                </div>
 
-            <button type="submit" class="btn btn-add" style="width: 100%;">
-                ➕ Créer le créneau
-            </button>
-        </form>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px;">
+                    Enregistrer le créneau
+                </button>
+            </form>
+        </div>
     </div>
 
-    <div class="back-link">
-        <a th:href="@{/}">← Retour à l'accueil</a>
+    <div id="ajouter-atelier-tab" class="tab-content">
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <h2 style="margin-bottom: 20px; color: var(--primary-color, #667eea);">Nouvel Atelier</h2>
+
+            <form th:action="@{/admin/ateliers/ajouter}" method="post">
+                <div class="form-group">
+                    <label>Titre de l'atelier</label>
+                    <input type="text" name="titre" required placeholder="Ex: Chimie Amusante" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="4" maxlength="500" placeholder="Courte description de l'atelier..." class="form-control"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Animateur Responsable</label>
+                    <select name="animateurId" class="form-control">
+                        <option value="">-- Aucun pour le moment --</option>
+                        <option th:each="anim : ${animateurs}"
+                                th:value="${anim.id}"
+                                th:text="${anim.nom + ' (' + anim.email + ')'}">Nom Animateur</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px;">
+                    Créer l'atelier
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 
 <div id="editModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>✏️ Modifier le créneau</h2>
+            <h3 id="modalTitle" style="margin: 0; color: var(--primary-color, #667eea);">Modifier le créneau</h3>
             <button class="btn-close" onclick="closeModal()">&times;</button>
         </div>
 
@@ -450,65 +202,109 @@
             <input type="hidden" id="creneauId" name="creneauId">
 
             <div class="form-group">
-                <label>Horaire de début (heure)</label>
-                <input type="number" id="editHoraire" name="horaireDebut" min="8" max="18" required>
+                <label>Horaire (H)</label>
+                <input type="number" id="editHoraire" name="horaireDebut" min="8" max="20" required class="form-control">
             </div>
 
             <div class="form-group">
-                <label>Durée (minutes)</label>
-                <input type="number" id="editDuree" name="duree" min="30" max="240" required>
+                <label>Durée (min)</label>
+                <input type="number" id="editDuree" name="duree" min="15" step="15" required class="form-control">
             </div>
 
             <div class="form-group">
                 <label>Lieu</label>
-                <input type="text" id="editLieu" name="lieu" required>
+                <input type="text" id="editLieu" name="lieu" required class="form-control">
             </div>
 
             <div class="form-group">
-                <label>Capacité maximale</label>
-                <input type="number" id="editCapacite" name="capacite" min="1" max="100" required>
+                <label>Capacité</label>
+                <input type="number" id="editCapacite" name="capacite" min="1" required class="form-control">
             </div>
 
-            <div style="display: flex; gap: 10px;">
-                <button type="submit" class="btn btn-edit" style="flex: 1;">💾 Enregistrer</button>
-                <button type="button" class="btn" style="background: #dc3545; color: white; flex: 1;"
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">Enregistrer</button>
+                <button type="button" class="btn btn-outline" style="flex: 1; color: #dc3545; border-color: #dc3545;"
                         onclick="if(confirm('Supprimer ce créneau ?')) deleteCreneau()">
-                    🗑️ Supprimer
+                    Supprimer
                 </button>
             </div>
         </form>
     </div>
 </div>
 
+<div id="editAtelierModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 style="margin: 0; color: var(--primary-color, #667eea);">Modifier l'Atelier</h3>
+            <button class="btn-close" onclick="closeAtelierModal()">&times;</button>
+        </div>
+
+        <form id="editAtelierForm" th:action="@{/admin/ateliers/modifier}" method="post">
+            <input type="hidden" id="editAtelierId" name="id">
+
+            <div class="form-group">
+                <label>Titre</label>
+                <input type="text" id="editAtelierTitre" name="titre" required class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="editAtelierDescription" name="description" rows="4" maxlength="500" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Animateur</label>
+                <select id="editAtelierAnimateur" name="animateurId" class="form-control">
+                    <option value="">-- Aucun --</option>
+                    <option th:each="anim : ${animateurs}"
+                            th:value="${anim.id}"
+                            th:text="${anim.nom}">Nom Animateur</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">Enregistrer</button>
+                <button type="button" class="btn btn-outline" style="flex: 1; color: #dc3545; border-color: #dc3545;"
+                        onclick="if(confirm('ATTENTION: Supprimer cet atelier supprimera également tous ses créneaux ! \n\nContinuer ?')) deleteAtelier()">
+                    Supprimer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: site-footer}"></div>
+
 <script>
+    // Tab switching
     function switchTab(tabName, clickedButton) {
-        document.querySelectorAll('.tab-content').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.classList.remove('active');
-        });
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById(tabName + '-tab').classList.add('active');
-        if (clickedButton) {
-            clickedButton.classList.add('active');
-        }
+        if (clickedButton) clickedButton.classList.add('active');
     }
 
-    function editCreneauFromButton(button) {
+    // --- Modal Logic : Creneau ---
+    function openEditModal(button) {
         const id = button.getAttribute('data-id');
         const capacite = button.getAttribute('data-capacite');
         const horaire = button.getAttribute('data-horaire');
         const lieu = button.getAttribute('data-lieu');
         const duree = button.getAttribute('data-duree');
-        editCreneau(id, capacite, horaire, lieu, duree);
-    }
+        const atelierTitre = button.getAttribute('data-atelier-titre');
 
-    function editCreneau(id, capacite, horaire, lieu, duree) {
         document.getElementById('creneauId').value = id;
         document.getElementById('editCapacite').value = capacite;
         document.getElementById('editHoraire').value = horaire;
         document.getElementById('editLieu').value = lieu;
         document.getElementById('editDuree').value = duree;
+
+        if(atelierTitre) {
+            document.getElementById('modalTitle').textContent = 'Modifier le créneau de ' + atelierTitre;
+        } else {
+            document.getElementById('modalTitle').textContent = 'Modifier le créneau';
+        }
+
         document.getElementById('editModal').classList.add('active');
     }
 
@@ -523,11 +319,42 @@
         form.submit();
     }
 
-    document.getElementById('editModal').addEventListener('click', function(e) {
-        if (e.target === this) {
+    // --- Modal Logic : Atelier (NEW) ---
+    function openEditAtelierModal(button) {
+        const id = button.getAttribute('data-id');
+        const titre = button.getAttribute('data-titre');
+        const description = button.getAttribute('data-description');
+        const animateurId = button.getAttribute('data-animateur-id');
+
+        document.getElementById('editAtelierId').value = id;
+        document.getElementById('editAtelierTitre').value = titre;
+        document.getElementById('editAtelierDescription').value = description;
+        document.getElementById('editAtelierAnimateur').value = animateurId;
+
+        document.getElementById('editAtelierModal').classList.add('active');
+    }
+
+    function closeAtelierModal() {
+        document.getElementById('editAtelierModal').classList.remove('active');
+    }
+
+    function deleteAtelier() {
+        const atelierId = document.getElementById('editAtelierId').value;
+        const form = document.getElementById('editAtelierForm');
+        form.action = '/admin/ateliers/supprimer/' + atelierId;
+        form.submit();
+    }
+
+    // Close on click outside
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('editModal')) {
             closeModal();
         }
-    });
+        if (event.target == document.getElementById('editAtelierModal')) {
+            closeAtelierModal();
+        }
+    }
 </script>
+
 </body>
 </html>
