@@ -67,13 +67,14 @@ public class AdminAtelierController {
                                  @RequestParam int horaireDebut,
                                  @RequestParam int duree,
                                  @RequestParam String lieu,
+                                 @RequestParam String planDeSalle,
                                  @RequestParam int capacite,
                                  RedirectAttributes redirectAttributes) {
         try {
             Atelier atelier = atelierRepository.findById(atelierId)
                     .orElseThrow(() -> new IllegalArgumentException("Atelier introuvable"));
 
-            Creneau nouveauCreneau = new Creneau(horaireDebut, duree, lieu, capacite);
+            Creneau nouveauCreneau = new Creneau(horaireDebut, duree, lieu, planDeSalle, capacite);
             atelier.ajouterCreneau(nouveauCreneau);
 
             creneauRepository.save(nouveauCreneau);
@@ -94,6 +95,7 @@ public class AdminAtelierController {
                                   @RequestParam int horaireDebut,
                                   @RequestParam int duree,
                                   @RequestParam String lieu,
+                                  @RequestParam String planDeSalle,
                                   @RequestParam int capacite,
                                   RedirectAttributes redirectAttributes) {
         try {
@@ -111,6 +113,7 @@ public class AdminAtelierController {
             creneau.setHoraireDebut(horaireDebut);
             creneau.setDuree(duree);
             creneau.setLieu(lieu);
+            creneau.setPlanDeSalle(planDeSalle);
             creneau.setCapacite(capacite);
             creneau.setStatut(creneau.isComplet());
 

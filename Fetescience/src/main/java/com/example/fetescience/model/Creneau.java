@@ -18,6 +18,7 @@ public class Creneau {
     private int horaireDebut;
     private int duree;
     private String lieu;
+    private String planDeSalle;
     private boolean statut; // true = complet
     private int capacite;
 
@@ -34,10 +35,11 @@ public class Creneau {
 
     public Creneau() {}
 
-    public Creneau(int horaireDebut, int duree, String lieu, int capacite) {
+    public Creneau(int horaireDebut, int duree, String lieu, String planDeSalle, int capacite) {
         this.horaireDebut = horaireDebut;
         this.duree = duree;
         this.lieu = lieu;
+        this.planDeSalle = planDeSalle;
         this.capacite = capacite;
         this.statut = false;
 

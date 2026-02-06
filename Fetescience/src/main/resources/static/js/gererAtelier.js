@@ -18,13 +18,14 @@ function toggleDescription() {
     }
 }
 
-function editCreneau(id, horaire, duree, capacite, lieu) {
+function editCreneau(id, horaire, duree, capacite, lieu, planDeSalle) {
     // 1. Remplir les champs
     document.getElementById('creneauId').value = id;
     document.getElementById('horaire').value = horaire;
     document.getElementById('duree').value = duree;
     document.getElementById('capacite').value = capacite;
     document.getElementById('lieu').value = lieu;
+    document.getElementById('planDeSalle').value = planDeSalle;
 
     // 2. Changer l'interface visuelle
     document.getElementById('form-title').innerText = "✏️ Modifier le créneau";

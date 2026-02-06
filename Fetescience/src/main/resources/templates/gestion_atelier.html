@@ -101,6 +101,7 @@
                     <th style="padding: 12px;">Horaire</th>
                     <th style="padding: 12px;">Durée</th>
                     <th style="padding: 12px;">Lieu</th>
+                    <th style="padding: 12px;">Plan De Salle / Précisions</th>
                     <th style="padding: 12px;">Places</th>
                     <th style="padding: 12px;">Action</th>
                 </tr>
@@ -111,7 +112,8 @@
                         <span class="time-badge" th:text="${c.horaireDebut} + 'h00'">14h00</span>
                     </td>
                     <td style="padding: 12px;" th:text="${c.duree} + ' min'">60 min</td>
-                    <td style="padding: 12px;" th:text="${c.lieu}">Salle B</td>
+                    <td style="padding: 12px;" th:text="${c.lieu}">Polytech Nancy</td>
+                    <td style="padding: 12px;" th:text="${c.planDeSalle}">Salle B</td>
                     <td style="padding: 12px;">
                         <strong th:text="${c.inscriptions.size()}">0</strong> /
                         <span th:text="${c.capacite}">20</span>
@@ -121,7 +123,7 @@
                              alt="Modifier"
                              width="20"
                              class="action-btn"
-                             th:onclick="editCreneau([[${c.id}]], [[${c.horaireDebut}]], [[${c.duree}]], [[${c.capacite}]], [[${c.lieu}]])"
+                             th:onclick="editCreneau([[${c.id}]], [[${c.horaireDebut}]], [[${c.duree}]], [[${c.capacite}]], [[${c.lieu}]], [[${c.planDeSalle}]] )"
                              title="Modifier ce créneau">
                     </td>
                 </tr>
@@ -163,7 +165,13 @@
                 <div class="form-group">
                     <label>Lieu :</label>
                     <input type="text" th:field="*{lieu}" id="lieu"
-                           placeholder="Ex: Salle 12, Bat. B" required class="form-control">
+                           placeholder="Ex: Polytech Nancy" required class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Plan de salle / Précisions :</label>
+                    <input type="text" th:field="*{planDeSalle}" id="planDeSalle"
+                           placeholder="Ex: Batiment A, 2ème étage, Salle 204" class="form-control">
                 </div>
 
                 <!-- ✅ AJOUT : MAP PREVIEW (aucun champ supprimé) -->

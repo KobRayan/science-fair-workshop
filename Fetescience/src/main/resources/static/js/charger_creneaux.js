@@ -18,6 +18,7 @@ function updateInfoBox(type) {
         document.getElementById('info-creneau-horaire').innerText = selectedOption.dataset.horaire || "";
         document.getElementById('info-creneau-duree').innerText = selectedOption.dataset.duree || "";
         document.getElementById('info-creneau-lieu').innerText = selectedOption.dataset.lieu || "";
+        document.getElementById('info-creneau-planDeSalle').innerText = selectedOption.dataset.planDeSalle || "";
     }
 }
 
@@ -71,12 +72,14 @@ function chargerCreneaux() {
                 data.forEach(creneau => {
                     const option = document.createElement("option");
                     option.value = creneau.id;
-                    option.text = `${creneau.horaireDebut}h00 - ${creneau.lieu}`;
+                    option.text = `${creneau.horaireDebut}h00 - ${creneau.lieu} - ${creneau.planDeSalle} `;
+
 
                     // Dataset
                     option.dataset.horaire = creneau.horaireDebut + "h00";
                     option.dataset.duree = creneau.duree + " min";
                     option.dataset.lieu = creneau.lieu;
+                    option.dataset.planDeSalle = creneau.planDeSalle;
 
                     const places = creneau.placesRestantes !== undefined ? creneau.placesRestantes : 0;
 
@@ -117,6 +120,7 @@ function onCreneauChange() {
 
     const selectedOption = creneauSelect.options[creneauSelect.selectedIndex];
     const lieu = selectedOption.dataset.lieu;
+    const planDeSalle = selectedOption.dataset.planDeSalle;
 
     // 🔥 AFFICHER LES DÉTAILS
     box.style.display = "block";

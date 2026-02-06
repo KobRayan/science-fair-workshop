@@ -8,6 +8,7 @@ public class CreneauDTO {
     private int horaireDebut;  // ✅ Changé en int pour correspondre à votre modèle
     private Integer duree;
     private String lieu;
+    private String planDeSalle;
     private Integer capacite;
     private Integer inscriptionsCount;
     private Integer placesRestantes;
@@ -15,11 +16,12 @@ public class CreneauDTO {
 
     // Constructeur adapté à votre modèle Creneau
     public CreneauDTO(Long id, int horaireDebut, Integer duree,
-                      String lieu, Integer capacite, Integer inscriptionsCount) {
+                      String lieu,String planDeSalle, Integer capacite, Integer inscriptionsCount) {
         this.id = id;
         this.horaireDebut = horaireDebut;
         this.duree = duree;
         this.lieu = lieu;
+        this.planDeSalle = planDeSalle;
         this.capacite = capacite;
         this.inscriptionsCount = inscriptionsCount;
         this.placesRestantes = capacite - inscriptionsCount;
@@ -90,4 +92,8 @@ public class CreneauDTO {
     public void setComplet(boolean complet) {
         this.complet = complet;
     }
+
+    public String getPlanDeSalle() { return planDeSalle; }
+    public void setPlanDeSalle(String planDeSalle) { this.planDeSalle = planDeSalle; }
+
 }

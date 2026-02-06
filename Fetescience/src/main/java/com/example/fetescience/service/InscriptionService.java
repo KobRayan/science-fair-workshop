@@ -4,12 +4,18 @@ import com.example.fetescience.model.*;
 import com.example.fetescience.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class InscriptionService {
+
+    private static final List<String> AUTO_VALID_DOMAINS = List.of(
+            "gmail.com", "laposte.fr", "hotmail.com", "yahoo.com", "free.fr", "univ-lorraine.fr", "etu.univ-lorraine.fr"
+    );
 
     private final InscriptionRepository inscriptionRepository;
     private final PersonneRepository personneRepository;
@@ -38,26 +44,37 @@ public class InscriptionService {
     /**
      * Accepter une inscription (admin)
      */
+
     @Transactional
     public void accepterInscription(Long inscriptionId) {
         Inscription inscription = inscriptionRepository.findById(inscriptionId)
                 .orElseThrow(() -> new IllegalArgumentException("Inscription non trouvée"));
 
-        inscription.setStatut(StatutInscription.VALIDEE);
+        doValider(inscription); // Reuse logic
         inscriptionRepository.save(inscription);
     }
 
-    /**
-     * Refuser une inscription (admin)
-     */
     @Transactional
     public void refuserInscription(Long inscriptionId) {
         Inscription inscription = inscriptionRepository.findById(inscriptionId)
                 .orElseThrow(() -> new IllegalArgumentException("Inscription non trouvée"));
 
-        inscription.setStatut(StatutInscription.REFUSEE);
+        doRefuser(inscription); // Reuse logic
         inscriptionRepository.save(inscription);
     }
+
+    @Transactional
+    public void accepterToutesInscriptions() {
+        inscriptionRepository.updateAllStatut(StatutInscription.EN_ATTENTE, StatutInscription.VALIDEE);
+    }
+
+    @Transactional
+    public void refuserToutesInscriptions() {
+        inscriptionRepository.updateAllStatut(StatutInscription.EN_ATTENTE, StatutInscription.REFUSEE);
+    }
+
+
+
 
     // ========== MÉTHODES POUR LES PARTICIPANTS ==========
 
@@ -94,6 +111,10 @@ public class InscriptionService {
         }
         Participant participant = (Participant) personne;
 
+        String userEmail = participant.getEmail().toLowerCase();
+        boolean isAutoValidated = AUTO_VALID_DOMAINS.stream().anyMatch(userEmail::endsWith);
+
+
         Creneau creneau = creneauRepository.findById(creneauId)
                 .orElseThrow(() -> new IllegalArgumentException("Créneau non trouvé"));
 
@@ -105,7 +126,7 @@ public class InscriptionService {
         Inscription inscription = new Inscription();
         inscription.setParticipant(participant);
         inscription.setCreneau(creneau);
-        inscription.setStatut(StatutInscription.EN_ATTENTE);
+        inscription.setStatut(isAutoValidated ? StatutInscription.VALIDEE : StatutInscription.EN_ATTENTE);
         inscription.setDateInscription(LocalDateTime.now());
 
         inscriptionRepository.save(inscription);
@@ -123,6 +144,11 @@ public class InscriptionService {
             throw new IllegalArgumentException("Seuls les participants peuvent s'inscrire");
         }
         Participant participant = (Participant) personne;
+        String userEmail = participant.getEmail().toLowerCase();
+        boolean isAutoValidated = AUTO_VALID_DOMAINS.stream().anyMatch(userEmail::endsWith);
+
+
+
 
         Creneau creneau = creneauRepository.findById(creneauId)
                 .orElseThrow(() -> new IllegalArgumentException("Créneau non trouvé"));
@@ -132,8 +158,32 @@ public class InscriptionService {
         }
 
         Inscription inscription = new Inscription(participant, creneau);
+        if (isAutoValidated) {
+            inscription.setStatut(StatutInscription.VALIDEE);
+        }
         return  inscriptionRepository.save(inscription);
     }
+
+    /**
+     * Automatically runs every time the application starts.
+     * Validates any existing "EN_ATTENTE" inscriptions matching the authorized domains.
+     */
+    @EventListener(ContextRefreshedEvent.class)
+    @Transactional
+    public void autoValiderAuDemarrage() {
+        List<Inscription> inscriptions = inscriptionRepository.findAll();
+
+        long count = inscriptions.stream()
+                .filter(ins -> ins.getStatut() == StatutInscription.EN_ATTENTE)
+                .filter(ins -> AUTO_VALID_DOMAINS.stream().anyMatch(domain -> ins.getParticipant().getEmail().toLowerCase().endsWith(domain)))
+                .peek(ins -> ins.setStatut(StatutInscription.VALIDEE))
+                .count();
+
+        if (count > 0) {
+            System.out.println("✅Auto-validation au démarrage : " + count + " inscriptions mises à jour.");
+        }
+    }
+
 
     /**
      * Se désinscrire d'un atelier (via ID inscription)
@@ -193,5 +243,15 @@ public class InscriptionService {
         public long getTotal() { return total; }
         public long getEnAttente() { return enAttente; }
         public long getValidees() { return validees; }
+
+    }
+
+    private void doValider(Inscription inscription) {
+        // Centralize logic here (e.g., if you later need to set a validation date or send an email)
+        inscription.setStatut(StatutInscription.VALIDEE);
+    }
+
+    private void doRefuser(Inscription inscription) {
+        inscription.setStatut(StatutInscription.REFUSEE);
     }
 }

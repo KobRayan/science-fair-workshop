@@ -53,11 +53,34 @@ public class AdminController {
         return "redirect:/admin/inscriptions";
     }
 
+
     @PostMapping("/inscriptions/refuser/{id}")
     public String refuserInscription(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             inscriptionService.refuserInscription(id);
             redirectAttributes.addFlashAttribute("success", "Inscription refusée !");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erreur : " + e.getMessage());
+        }
+        return "redirect:/admin/inscriptions";
+    }
+
+    @PostMapping("/inscriptions/valider-tout")
+    public String validerTout(RedirectAttributes redirectAttributes) {
+        try {
+            inscriptionService.accepterToutesInscriptions();
+            redirectAttributes.addFlashAttribute("success", "Toutes les inscriptions en attente ont été validées !");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erreur : " + e.getMessage());
+        }
+        return "redirect:/admin/inscriptions";
+    }
+
+    @PostMapping("/inscriptions/refuser-tout")
+    public String refuserTout(RedirectAttributes redirectAttributes) {
+        try {
+            inscriptionService.refuserToutesInscriptions();
+            redirectAttributes.addFlashAttribute("success", "Toutes les inscriptions en attente ont été refusées.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erreur : " + e.getMessage());
         }

@@ -76,13 +76,13 @@ class FetescienceApplicationTests {
 
 
         // --- 3. CRENEAUX ---
-        Creneau c1 = new Creneau(14, 60, "Labo Chimie", 20);
+        Creneau c1 = new Creneau(14, 60, "Labo Chimie", "Salle B",20);
         creneauService.addCreneauToAtelier(atelier1, c1);
 
-        Creneau c2 = new Creneau(15, 30, "Salle Rayons X", 1);
+        Creneau c2 = new Creneau(15, 30, "Salle Rayons X","Salle B", 1);
         creneauService.addCreneauToAtelier(atelier1, c2);
 
-        Creneau c3 = new Creneau(10, 60, "Tour Wardenclyffe", 0);
+        Creneau c3 = new Creneau(10, 60, "Tour Wardenclyffe","Salle B", 0);
         creneauService.addCreneauToAtelier(atelier2, c3);
 
         // IDEM POUR LES CRENEAUX : On vérifie juste que c3 existe et qu'il est complet
@@ -157,7 +157,7 @@ class FetescienceApplicationTests {
         atelier.setAnimateur(anim);
         atelierService.create(atelier);
 
-        Creneau creneauUnique = new Creneau(14, 60, "Salle 101", 1);
+        Creneau creneauUnique = new Creneau(14, 60, "Salle 101","Salle B", 1);
         creneauService.addCreneauToAtelier(atelier, creneauUnique);
 
         // Gamma prend la place

@@ -46,6 +46,26 @@
         </div>
     </div>
 
+    <div style="display: flex; gap: 15px; margin-bottom: 20px; justify-content: flex-end;">
+
+        <form th:action="@{/admin/inscriptions/valider-tout}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-primary"
+                    style="background-color: #28a745; border-color: #28a745;"
+                    onclick="return confirm('Êtes-vous sûr de vouloir ACCEPTER toutes les inscriptions en attente ?\nCette action est irréversible.')">
+                ✓ Tout Accepter
+            </button>
+        </form>
+
+        <form th:action="@{/admin/inscriptions/refuser-tout}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-primary"
+                    style="background-color: #dc3545; border-color: #dc3545;"
+                    onclick="return confirm('Êtes-vous sûr de vouloir REFUSER toutes les inscriptions en attente ?\nCette action est irréversible.')">
+                ✗ Tout Refuser
+            </button>
+        </form>
+
+    </div>
+
     <div th:if="${inscriptions.isEmpty()}" class="empty-state">
         <img th:src="@{/images/investigator_404.png}" alt="Vide" style="height: 100px; opacity: 0.5; margin-bottom: 10px;">
         <p>Aucune inscription trouvée pour le moment.</p>

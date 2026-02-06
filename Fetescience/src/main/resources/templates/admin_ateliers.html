@@ -89,8 +89,10 @@
                             <div style="font-weight: bold; color: #333;">
                                 <span th:text="${creneau.horaireDebut} + 'h'">10h</span>
                                 <span style="font-weight: normal;"> à </span>
-                                <span th:text="${creneau.lieu}">Salle B</span>
+                                <span th:text="${creneau.lieu}">Polytech Nancy</span>
+                                <span th:text="${creneau.planDeSalle}">Batiment A, Salle 201 </span>
                             </div>
+
                             <small style="color: #666;">
                                 ⏳ <span th:text="${creneau.duree}">60</span> min |
                                 👥 <span th:text="${creneau.inscriptions.size()}">0</span>/<span th:text="${creneau.capacite}">20</span>
@@ -104,6 +106,7 @@
                                              data-capacite=${creneau.capacite},
                                              data-horaire=${creneau.horaireDebut},
                                              data-lieu=${creneau.lieu},
+                                             data-planDeSalle=${creneau.planDeSalle},
                                              data-duree=${creneau.duree},
                                              data-atelier-titre=${atelier.titre}"
                                     onclick="openEditModal(this)">
@@ -143,7 +146,13 @@
 
                 <div class="form-group">
                     <label>Lieu</label>
-                    <input type="text" name="lieu" required placeholder="Ex: Salle 12" class="form-control">
+                    <input type="text" name="lieu" required placeholder="Ex: Polytech Nancy" class="form-control">
+                </div>
+
+
+                <div class="form-group">
+                    <label>Plan De Salle / Précisions</label>
+                    <input type="text" name="planDeSalle" required placeholder="Ex: Batiment A, Salle 12" class="form-control">
                 </div>
 
                 <div class="form-group">
@@ -214,6 +223,11 @@
             <div class="form-group">
                 <label>Lieu</label>
                 <input type="text" id="editLieu" name="lieu" required class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>PlanDeSalle</label>
+                <input type="text" id="editPlanDeSalle" name="planDeSalle" required class="form-control">
             </div>
 
             <div class="form-group">
@@ -290,6 +304,7 @@
         const capacite = button.getAttribute('data-capacite');
         const horaire = button.getAttribute('data-horaire');
         const lieu = button.getAttribute('data-lieu');
+        const planDeSalle = button.getAttribute('data-planDeSalle');
         const duree = button.getAttribute('data-duree');
         const atelierTitre = button.getAttribute('data-atelier-titre');
 
@@ -297,6 +312,8 @@
         document.getElementById('editCapacite').value = capacite;
         document.getElementById('editHoraire').value = horaire;
         document.getElementById('editLieu').value = lieu;
+        document.getElementById('editPlanDeSalle').value = planDeSalle;
+
         document.getElementById('editDuree').value = duree;
 
         if(atelierTitre) {
